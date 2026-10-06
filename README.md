@@ -24,7 +24,7 @@
 
 ## 安装与使用
 
-打开 [`build/Spherail-macOS.dmg`](build/Spherail-macOS.dmg)，将 Spherail（中文系统显示为“绘轨”）拖入“应用程序”。首次启动会创建随机的 `player######` 名称和默认头像（支持上传图片、拖动和缩放裁剪）；点击右上角头像即可修改。个人地图与记录继续存储在 `~/Library/Application Support/InkBall/`，以保留旧版本数据。
+从 [GitHub Releases](https://github.com/rrrome/spherail/releases/latest) 下载适合当前 Mac 的 DMG 安装包，打开后将 Spherail（中文系统显示为“绘轨”）拖入“应用程序”。本地构建的安装包位于 `build/Spherail-macOS.dmg`。首次启动会创建随机的 `player######` 名称和默认头像（支持上传图片、拖动和缩放裁剪）；点击右上角头像即可修改。个人地图与记录继续存储在 `~/Library/Application Support/InkBall/`，以保留旧版本数据。
 
 “制作地图”同时展示所有本机自制地图。“新建地图”始终在首位；可按地图名称搜索，并按最近或最早编辑排序。点击地图预览即可选择难度并游玩；卡片底部提供带图标的编辑按钮和删除按钮，删除仍需确认。编辑器仍可直接试玩。保存时会检查地图名称、时间与发球间隔，以及每个已制作难度的球、球洞和颜色支持。点击编辑器或难度页右上角的“导出地图”会复制当前难度的 `INKBALL-LEVEL/1` 明文代码；在编辑器“导入”中粘贴，可导入到同一张地图的另一个难度。
 
