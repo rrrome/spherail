@@ -1,0 +1,12 @@
+# macOS metadata
+.DS_Store
+._*
+
+# Swift package and application build output
+.build/
+.swiftpm/
+build/
+
+# Python caches
+__pycache__/
+*.py[cod]

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <radialGradient id="bg" cx=".32" cy=".24" r=".9">
+      <stop stop-color="#417671"/>
+      <stop offset="1" stop-color="#153b3e"/>
+    </radialGradient>
+    <radialGradient id="ball" cx=".32" cy=".25" r=".78">
+      <stop stop-color="#fff8dd"/>
+      <stop offset=".28" stop-color="#90e6c9"/>
+      <stop offset=".68" stop-color="#2a9c9b"/>
+      <stop offset="1" stop-color="#13565d"/>
+    </radialGradient>
+  </defs>
+  <circle cx="64" cy="64" r="62" fill="#e7d8b6"/>
+  <circle cx="64" cy="64" r="56" fill="url(#bg)"/>
+  <path d="M27 80c7 16 23 26 42 25 17-1 30-11 34-25" fill="none" stroke="#f3ddaa" stroke-width="5" stroke-linecap="round" opacity=".8"/>
+  <path d="M33 81c18 7 32-7 39-21 6-12 15-20 25-22" fill="none" stroke="#53d5c3" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="92" cy="37" r="19" fill="#102f37" stroke="#f7e7bd" stroke-width="4"/>
+  <circle cx="92" cy="37" r="9" fill="#091d27"/>
+  <circle cx="38" cy="80" r="18" fill="url(#ball)" stroke="#d9fff0" stroke-width="2"/>
+  <ellipse cx="32" cy="72" rx="5" ry="2.5" fill="#fff" opacity=".8" transform="rotate(-27 32 72)"/>
+</svg>

@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>绘轨</title>
+  <link rel="stylesheet" href="desktop.css">
+  <link rel="stylesheet" href="desktop-web.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand"><img src="img/ui/arcade-mark.svg" alt=""><strong>绘轨</strong></div>
+    <nav aria-label="主导航"><span class="app-nav-highlight" aria-hidden="true"></span>
+      <button type="button" data-route="maps">官方地图</button>
+      <button type="button" data-route="personal">制作地图</button>
+    </nav>
+    <button type="button" class="profile-button" id="profile-open" aria-label="修改用户名和头像">
+      <img id="header-avatar" alt=""><span id="header-name" translate="no"></span>
+    </button>
+  </header>
+
+  <main>
+    <section id="maps-view" class="view map-home" data-map-carousel data-map-count="10" data-login-arrival="false">
+      <canvas class="page-ambient map-home__ambient" data-map-ambient="live" aria-hidden="true"></canvas>
+      <div class="map-home__masthead">
+        <p class="arcade-eyebrow"><span class="arcade-led" aria-hidden="true"></span>绘轨游乐场 · 官方关卡</p>
+      </div>
+      <div class="map-home__stage" data-map-stage>
+        <div class="map-home__frame">
+          <div class="map-home__viewport" data-map-viewport>
+            <div class="map-home__track" id="official-map-list" data-map-track></div>
+          </div>
+          <button type="button" class="map-home__nav map-home__nav--prev" data-map-prev aria-label="上一张地图"><svg class="map-home__nav-icon" viewBox="0 0 32 36" aria-hidden="true"><polygon points="24,3.5 24,32.5 5.5,18"></polygon></svg></button>
+          <button type="button" class="map-home__nav map-home__nav--next" data-map-next aria-label="下一张地图"><svg class="map-home__nav-icon" viewBox="0 0 32 36" aria-hidden="true"><polygon points="8,3.5 8,32.5 26.5,18"></polygon></svg></button>
+        </div>
+      </div>
+      <footer class="map-home__footer"><span class="map-home__hint">滑动探索 · 点击地图开始</span>
+        <span class="map-home__position"><strong data-carousel-position>01</strong><span data-carousel-total>/ 10</span></span>
+        <span class="map-home__keys" aria-hidden="true">← &nbsp; →</span></footer>
+      <script id="inkball-maps" type="application/json">[]</script>
+    </section>
+
+    <section id="personal-view" class="view personal-view workshop-view" hidden>
+      <canvas class="page-ambient workshop-view__ambient" data-map-ambient="community" data-community-tab="custom" data-ambient-brick-src="img/inkball/ambient_diy.png" aria-hidden="true"></canvas>
+      <div class="workshop-toolbar">
+        <form id="personal-search-form" class="workshop-search"><label class="workshop-filter"><span class="sr-only">排序</span><select id="personal-sort" class="workshop-filter__select"><option value="newest">最近编辑</option><option value="oldest">最早编辑</option></select></label>
+          <label class="sr-only" for="personal-query">搜索地图名称</label><input id="personal-query" class="workshop-search__input" type="search" maxlength="100" placeholder="搜索地图名称" autocomplete="off"><button type="submit" class="workshop-search__submit">搜索</button></form></div>
+      <h2 class="workshop-count">个人 · <span id="personal-count">0</span></h2>
+      <div id="personal-map-list" class="workshop-grid"></div>
+      <p id="personal-empty" class="workshop-empty" hidden>没有找到符合条件的地图。</p>
+    </section>
+
+    <section id="detail-view" class="view detail-view map-detail" hidden>
+      <canvas class="page-ambient" data-map-ambient="still" aria-hidden="true"></canvas>
+      <div class="map-detail__hero" id="detail-hero"><canvas id="detail-floor" class="map-detail__hero-floor" width="576" height="576" aria-hidden="true"></canvas><canvas id="detail-board" class="map-detail__hero-canvas" width="576" height="576" aria-label="地图预览"></canvas><canvas id="detail-outgoing" class="map-detail__hero-difference" width="576" height="576" aria-hidden="true" hidden></canvas><canvas id="detail-incoming" class="map-detail__hero-difference" width="576" height="576" aria-hidden="true" hidden></canvas></div>
+      <div class="map-detail__dim"></div>
+      <button id="detail-back" class="map-detail__back icon-button" aria-label="返回地图" title="返回"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m17 7-9 9 9 9M9 16h16"/></svg></button>
+      <div id="detail-export-tools" class="map-detail__export-tools" hidden><button id="detail-export" class="secondary">导出地图</button><p id="detail-export-status" role="status" aria-live="polite"></p></div>
+      <div class="map-detail__ui">
+        <p class="arcade-eyebrow" id="detail-type">官方地图</p>
+        <h1 class="map-detail__name" id="detail-name"></h1>
+        <p class="map-detail__author" id="detail-author"></p>
+        <div class="map-detail__tabs" id="detail-difficulties" role="tablist"></div>
+        <div class="map-detail__grid">
+          <section class="map-panel"><h2 class="map-panel__title">最佳记录</h2><dl class="map-detail__best-record"><div><dt>分数</dt><dd id="detail-best-score">—</dd></div><div><dt>用时</dt><dd id="detail-best-time">—</dd></div><div><dt>准确率</dt><dd id="detail-best-accuracy">—</dd></div><div><dt>通关数</dt><dd id="detail-clear-count">—</dd></div></dl></section>
+          <section class="map-panel"><h2 class="map-panel__title">关卡信息</h2><dl class="map-panel__readouts"><div><dt>倒计时</dt><dd id="detail-time"></dd></div><div><dt>发球间隔</dt><dd id="detail-interval"></dd></div><div><dt>小球总数</dt><dd id="detail-ball-count"></dd></div></dl></section>
+          <section class="map-panel" id="detail-recent-panel"><h2 class="map-panel__title">最近一局</h2><dl class="map-panel__readouts"><div><dt>得分</dt><dd id="detail-last-score">—</dd></div><div><dt>用时</dt><dd id="detail-last-duration">—</dd></div><div><dt>结果</dt><dd id="detail-last-result">—</dd></div></dl></section>
+          <section class="map-panel" id="detail-achievements-panel" hidden><h2 class="map-panel__title">关卡成就</h2><div class="map-achievements"><div class="map-achievements__list" id="detail-achievements" aria-live="polite"></div></div></section>
+        </div>
+        <div class="map-detail__actions"><div class="map-detail__primary-actions"><button id="detail-start" class="map-detail__start primary">开始游戏</button><button id="detail-duel" class="map-detail__challenge">对战</button></div></div>
+      </div>
+    </section>
+
+    <section id="editor-view" class="view community-editor" hidden>
+      <canvas class="page-ambient" data-map-ambient="still" aria-hidden="true"></canvas>
+      <header class="community-top">
+        <div class="community-top__nav"><button type="button" id="editor-back" class="icon-button" aria-label="返回制作地图" title="返回"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m17 7-9 9 9 9M9 16h16"/></svg></button><button type="button" id="editor-guide" class="icon-button" aria-label="砖块图例" aria-controls="editor-guide-panel" aria-expanded="false">?</button><aside id="editor-guide-panel" class="tile-guide" aria-label="砖块图例" hidden></aside></div>
+        <label class="community-name"><span>地图名称</span><input id="editor-name" maxlength="20" placeholder="我的地图"></label>
+        <div class="community-top__actions"><button type="button" id="editor-export" class="secondary">导出地图</button><span id="editor-export-status" role="status" aria-live="polite"></span><button type="button" id="editor-import" class="secondary">导入</button></div>
+      </header>
+      <nav class="community-difficulty-tabs" id="editor-difficulties" aria-label="地图难度">
+        <button data-difficulty="easy">萌新</button><button data-difficulty="hard">进阶</button><button data-difficulty="master">大师</button>
+      </nav>
+      <div class="community-body">
+        <aside class="community-palette" id="editor-palette" aria-label="地图素材"></aside>
+        <div class="community-board-wrap"><canvas id="editor-board" width="576" height="576" aria-label="地图编辑网格"></canvas></div>
+        <aside class="community-settings">
+          <p class="community-difficulty-status" id="editor-difficulty-status">正在编辑 · 萌新</p>
+          <label class="community-field">总时间 <span class="community-stepper"><input id="editor-time" type="number" min="1" max="3600" value="100"><span>秒</span></span></label>
+          <div class="community-field"><span>发球顺序</span><div class="community-serve-preview"><button id="editor-serve-prev" type="button" class="community-serve-scroll" aria-label="向前查看发球顺序">‹</button><div class="community-serve" id="editor-serve-list" tabindex="0" role="region" aria-label="发球顺序预览"></div><button id="editor-serve-next" type="button" class="community-serve-scroll" aria-label="向后查看发球顺序">›</button></div><div class="community-serve-source" id="editor-serve-source"></div></div>
+          <label class="community-field">发球间隔 <span class="community-stepper"><input id="editor-interval" type="number" min="0" max="600" value="4"><span>秒</span></span></label>
+          <button id="editor-save" class="primary">保存地图</button><p id="editor-status" role="status"></p>
+          <button id="editor-playtest" class="secondary">试玩</button>
+          <select id="editor-tool" aria-label="当前方块" hidden>
+            <option value=" ">橡皮擦</option><option value="X">墙</option><option value="1">橙墙</option><option value="2">蓝墙</option><option value="3">绿墙</option><option value="4">黄墙</option><option value="S">发球点</option><option value="H">洞</option><option value="B">预置球</option>
+            <option value="C">变色墙</option><option value="K">机关墙</option><option value="Y">开关</option>
+            <option value="V">单向门</option><option value="G">门</option><option value="T">计时墙</option>
+            <option value="U">上箭头</option><option value="D">下箭头</option><option value="L">左箭头</option><option value="R">右箭头</option>
+            <option value="u">上加速</option><option value="d">下加速</option><option value="l">左加速</option><option value="r">右加速</option>
+          </select>
+          <select id="editor-color" aria-label="当前颜色" hidden><option value="0">灰</option><option value="1">橙</option><option value="2">蓝</option><option value="3">绿</option><option value="4">黄</option></select>
+          <textarea id="editor-balls" hidden aria-label="待发球顺序"></textarea>
+        </aside>
+      </div>
+      <div class="community-edit-history"><button id="editor-undo" class="icon-button" aria-label="撤销"><img src="img/ui/undo.svg" alt=""></button><button id="editor-redo" class="icon-button" aria-label="重做"><img src="img/ui/redo.svg" alt=""></button></div>
+      <div class="community-edit-tools"><button id="editor-place-mode" class="icon-button" aria-label="放置素材" aria-pressed="true"><img src="img/ui/mouse-pointer.svg" alt=""></button><button id="editor-erase-mode" class="icon-button" aria-label="擦除素材" aria-pressed="false"><img src="img/ui/eraser.svg" alt=""></button></div>
+    </section>
+
+    <section id="match-view" class="view" hidden>
+      <div class="section-heading"><div><p class="eyebrow">LOCAL MATCH</p><h1>面对面对战</h1></div>
+        <button id="match-leave" class="secondary">返回地图</button></div>
+      <div class="match-panel match-setup">
+        <div class="match-setup__map"><span>本局地图</span><strong id="match-entry-label"></strong></div>
+        <div class="match-setup__guide"><div><h2>连接同一 Wi-Fi 或打开蓝牙</h2><p>两台 Mac 保持绘轨运行，并连接同一 Wi-Fi 或开启蓝牙。附近玩家会自动显示，地图随邀请发送。</p></div><button id="match-bluetooth-settings" class="secondary" type="button">打开蓝牙设置</button></div>
+        <div class="match-setup__players"><div><h2>可邀请的绘轨玩家</h2><p>选择一位玩家发送本地图和难度的对战邀请。</p></div><p id="match-status" role="status">正在寻找附近玩家…</p></div>
+        <div id="match-peers" class="match-peer-list"></div>
+        <div id="match-pending" class="match-pending" hidden><span id="match-pending-text"></span><button id="match-cancel" class="secondary" type="button">取消邀请</button></div>
+      </div>
+    </section>
+
+    <section id="play-view" class="view" hidden>
+      <canvas class="page-ambient" data-map-ambient="still" aria-hidden="true"></canvas>
+      <button id="play-guide" class="icon-button play-guide-fab" type="button" aria-label="砖块图例" aria-controls="play-guide-panel" aria-expanded="false">?</button>
+      <aside id="play-guide-panel" class="tile-guide play-guide-panel" aria-label="砖块图例" hidden></aside>
+      <button class="play-pause-fab" type="button" data-pause-open>Ⅱ&nbsp; 暂停</button>
+      <div id="match-connection-metrics" class="match-connection-metrics" hidden><span>通道 <strong id="match-transport">—</strong></span><span>延迟 <strong data-match-sync-latency>—</strong></span><span>信号 <strong id="match-signal">—</strong></span></div>
+      <div class="play-layout">
+        <div class="play-board play-board--self"><p id="self-board-label" class="match-board-label">我的棋盘</p><canvas id="game" width="576" height="640" aria-label="绘轨游戏棋盘"></canvas></div>
+        <div id="opponent-panel" class="play-board opponent" hidden><p id="opponent-label">对手棋盘</p>
+          <canvas id="opponent-game" width="576" height="640" aria-label="对手棋盘"></canvas>
+          <p data-opponent-empty>等待对手棋盘</p><p data-opponent-waiting hidden><span data-opponent-connection></span></p>
+          <span data-match-sync-name hidden></span>
+        </div>
+      </div>
+      <div id="match-finish-choice" class="match-finish-choice" hidden><div class="match-finish-choice__card"><h2>本局已结束</h2><p>对手仍在游玩。你可以继续观看对手的地图，或离开对局。</p><div class="actions"><button id="match-watch" class="primary" type="button">观看对手</button><button id="match-finish-leave" class="secondary" type="button">离开对局</button></div></div></div>
+      <button id="match-watch-leave" class="match-watch-leave secondary" type="button" hidden>离开对局</button>
+      <div class="community-edit-tools game-draw-tools" data-game-tools role="toolbar" aria-label="绘画工具"><button type="button" class="icon-button" data-game-tool="draw" aria-label="画线" aria-pressed="true"><img src="img/ui/mouse-pointer.svg" alt="" aria-hidden="true"></button><button type="button" class="icon-button" data-game-tool="erase" aria-label="擦除" aria-pressed="false"><img src="img/ui/eraser.svg" alt="" aria-hidden="true"></button></div>
+      <p id="status" role="status" hidden></p>
+      <dialog class="pause-overlay" data-pause-overlay hidden aria-labelledby="pause-dialog-title">
+        <div class="pause-dialog" id="pause-dialog"><span class="pause-dialog__tab" id="pause-dialog-title">暂停</span>
+          <div class="pause-actions">
+            <a class="pause-action pause-action--home" data-pause-home href="index.html"><img src="img/ui/back.svg" alt="" aria-hidden="true"><span id="pause-home-label">返回地图</span></a>
+            <button type="button" class="pause-action pause-action--restart" data-pause-restart><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 0 1 13.66-5.66L20 8M20 4v4h-4M20 12a8 8 0 0 1-13.66 5.66L4 16M4 20v-4h4"/></svg><span>重新开始</span></button>
+            <button type="button" class="pause-action pause-action--resume" data-pause-resume><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5.5v13l11-6.5-11-6.5z"/></svg><span>继续</span></button>
+          </div>
+        </div>
+      </dialog>
+      <script id="inkball-play" type="application/json">{}</script>
+    </section>
+
+    <section id="result-view" class="view result-page" hidden>
+      <canvas id="result-ambient" class="page-ambient result-page__ambient" data-map-ambient="rows" aria-hidden="true"></canvas>
+      <div id="result-board" class="result-card brick-frame">
+        <div id="result-handoff" class="result-handoff" hidden><img alt=""></div>
+        <div class="result-card__content">
+          <img id="result-emblem" class="result-card__emblem" src="img/ui/arcade-mark.svg" alt="" width="80" height="80">
+          <div class="result-card__heading"><h1 id="result-outcome" class="result-card__title"></h1><p id="result-new-record" class="result-card__badge" hidden>新纪录</p></div>
+          <div class="result-map"><span id="result-type" class="result-map__type"></span><div class="result-map__line"><span id="result-map" class="result-map__name"></span><span class="result-map__separator" aria-hidden="true">·</span><span id="result-difficulty" class="result-map__difficulty"></span></div></div>
+          <dl id="result-solo-stats" class="result-stats"><div><dt>用时</dt><dd id="result-time"></dd></div><div><dt>得分</dt><dd id="result-score"></dd></div><div><dt>准确率</dt><dd id="result-accuracy"></dd></div><div><dt>最高分</dt><dd id="result-best"></dd></div></dl>
+          <div id="result-match-stats" class="result-match-stats" hidden><section class="result-match-side"><h2 id="result-you-name" class="result-match-side__name">你</h2><dl class="result-stats"><div><dt>得分</dt><dd id="result-you-score">—</dd></div><div><dt>准确率</dt><dd id="result-you-accuracy">—</dd></div><div><dt>用时</dt><dd id="result-you-time">—</dd></div></dl></section><section class="result-match-side"><h2 id="result-peer-name" class="result-match-side__name">对手</h2><dl class="result-stats"><div><dt>得分</dt><dd id="result-peer-score">—</dd></div><div><dt>准确率</dt><dd id="result-peer-accuracy">—</dd></div><div><dt>用时</dt><dd id="result-peer-time">—</dd></div></dl></section></div>
+        </div>
+      </div>
+      <button id="result-again" class="result-btn result-btn--restart">重新开始</button><button id="result-continue" class="result-btn result-btn--continue">继续</button>
+    </section>
+  </main>
+
+  <dialog id="profile-dialog" aria-labelledby="profile-title"><div class="dialog-body profile-card">
+    <header class="profile-card__header"><p class="eyebrow">SPHERAIL / PLAYER</p><h2 id="profile-title">玩家资料</h2></header>
+    <div class="profile-card__identity"><div class="profile-card__avatar"><img id="profile-avatar-preview" src="img/ui/avatar-default.svg" alt=""><button id="profile-avatar-choose" class="profile-avatar-edit" type="button" aria-label="编辑头像" title="编辑头像"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5 5 5M4 20l4-1L20 7a2 2 0 0 0-3-3L5 16z"/></svg></button></div><div><strong id="profile-preview-name" translate="no"></strong><span>本机玩家</span></div></div>
+    <div class="profile-card__fields"><label>用户名<input id="profile-name" maxlength="50" autocomplete="nickname"></label>
+      <label for="profile-language">语言<select id="profile-language"><option value="zh">简体中文</option><option value="en">English</option></select></label></div>
+    <section class="profile-transparency"><label for="profile-detail-transparency">难度页面透明度</label><div class="profile-transparency__control"><input id="profile-detail-transparency" type="range" min="0" max="100" step="1" value="20" aria-describedby="profile-transparency-hint"><output id="profile-detail-transparency-value" for="profile-detail-transparency">20</output></div><p id="profile-transparency-hint">0 为不透明，100 为全透明；保存资料后保留设置。</p><div id="profile-transparency-preview" class="profile-transparency-preview" role="img" aria-label="难度页面透明度预览"><canvas id="profile-transparency-board" width="576" height="576" aria-hidden="true"></canvas><div class="profile-transparency-preview__ui"><strong id="profile-transparency-map-name" translate="no"></strong><div class="profile-transparency-preview__tabs"><span>萌新</span><span>进阶</span><span>大师</span></div><div class="profile-transparency-preview__panels"><span>最佳记录</span><span>关卡信息</span><span>关卡成就</span></div><span class="profile-transparency-preview__start">开始游戏</span></div></div></section>
+    <section class="profile-avatar" aria-labelledby="profile-avatar-title"><div class="profile-avatar__heading"><h3 id="profile-avatar-title">头像</h3><span>选择图片并调整头像区域</span></div>
+      <div class="profile-avatar__actions"><button id="profile-avatar-reset" type="button" class="secondary">恢复默认头像</button><input id="profile-avatar-file" type="file" accept="image/*" hidden></div>
+      <div id="profile-crop-tools" class="profile-crop-tools" hidden><p>拖动图片选择头像区域</p><div id="profile-crop-stage" class="profile-crop-stage" aria-label="头像裁剪区域"><img id="profile-crop-image" alt="" draggable="false"></div>
+        <label for="profile-crop-zoom">缩放<input id="profile-crop-zoom" type="range" min="1" max="3" step="0.01" value="1"></label></div>
+      <p class="profile-avatar__note">头像保存在本机；接受对战邀请后会发送给对方。</p></section>
+    <p id="profile-status" role="status"></p>
+    <div class="profile-card__footer"><button id="profile-save" type="button" class="primary">保存资料</button><button data-close="profile-dialog" type="button" class="secondary">取消</button></div>
+  </div></dialog>
+  <dialog id="code-dialog"><div class="dialog-body"><h2 id="code-title">地图代码</h2><textarea id="map-code" rows="13" spellcheck="false"></textarea>
+    <p id="code-status" role="status"></p><div class="actions"><button id="code-action">导入</button>
+      <button id="code-copy" class="secondary">复制</button><button data-close="code-dialog" class="secondary">关闭</button></div></div></dialog>
+  <dialog id="delete-map-dialog" aria-labelledby="delete-map-title"><div class="dialog-body"><h2 id="delete-map-title">删除地图？</h2><p>确定删除“<strong id="delete-map-name"></strong>”吗？此操作无法撤销。</p><div class="actions"><button id="delete-map-confirm" type="button">删除地图</button><button id="delete-map-cancel" type="button" class="secondary">取消</button></div></div></dialog>
+  <dialog id="editor-leave-dialog" aria-labelledby="editor-leave-title"><div class="dialog-body"><h2 id="editor-leave-title">放弃未保存的修改？</h2><p>退出后，本次编辑的内容将不会保存。</p><div class="actions"><button id="editor-leave-confirm" type="button">放弃修改</button><button id="editor-leave-cancel" type="button" class="secondary">继续编辑</button></div></div></dialog>
+  <dialog id="match-exit-dialog" aria-labelledby="match-exit-title"><div class="dialog-body"><h2 id="match-exit-title">退出对战？</h2><p>现在离开将判负。</p><div class="actions"><button id="match-exit-confirm" type="button">退出对战</button><button id="match-exit-cancel" type="button" class="secondary">继续比赛</button></div></div></dialog>
+  <dialog id="match-invite-dialog" aria-labelledby="match-invite-title"><div class="dialog-body match-invite-dialog"><p class="eyebrow">LOCAL MATCH</p><h2 id="match-invite-title">收到对战邀请</h2><div class="match-invite-dialog__player"><img id="match-invite-avatar" alt="" hidden><strong id="match-invite-name"></strong></div><p id="match-invite-map"></p><div class="actions"><button id="match-accept" class="primary" type="button">接受并开始</button><button id="match-decline" class="secondary" type="button">拒绝</button></div></div></dialog>
+  <div id="match-countdown" class="match-countdown" hidden aria-live="assertive"><span class="match-countdown__label">对战即将开始</span><strong id="match-countdown-number" class="match-countdown__number">3</strong></div>
+  <dialog id="editor-timed-dialog" class="timed-wall-dialog" aria-labelledby="editor-timed-title"><form id="editor-timed-form" method="dialog"><div class="timed-wall-dialog__body"><h2 id="editor-timed-title">限时墙</h2><label for="editor-timed-value">消失前持续多少秒？</label><div class="timed-wall-dialog__field"><input id="editor-timed-value" type="number" min="0" max="99" step="1" inputmode="numeric" required><span>秒</span></div><p class="timed-wall-dialog__hint">该设置只应用于当前选中的限时墙。</p><div class="timed-wall-dialog__actions"><button type="submit">确定</button><button type="button" id="editor-timed-cancel" class="secondary">取消</button></div></div></form></dialog>
+
+  <script src="official-data.js"></script><script src="i18n-data.js"></script><script src="desktop-i18n.js"></script>
+  <script src="js/ball-collision.js"></script>
+  <script src="js/inkball/constants.js"></script><script src="js/inkball/tiles.js"></script>
+  <script src="js/inkball/line.js"></script><script src="js/inkball/hole.js"></script>
+  <script src="js/inkball/ball.js"></script><script src="js/inkball/moving_tile.js"></script>
+  <script src="js/inkball/dashboard.js"></script><script src="js/inkball/level.js"></script>
+  <script src="js/inkball/app.js"></script>
+  <script src="js/inkball/match-sync.js"></script>
+  <script src="js/community-editor-state.js"></script><script src="js/community-editor-history.js"></script>
+  <script src="desktop.js"></script>
+  <script src="js/map-preview.js"></script><script src="js/map-home-preview.js"></script>
+  <script src="js/map-home-ambient.js"></script><script src="js/map-home.js"></script>
+</body>
+</html>

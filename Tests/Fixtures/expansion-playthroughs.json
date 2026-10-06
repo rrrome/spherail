@@ -1,0 +1,137 @@
+{
+  "spectrum-gates|easy": {
+    "seed": 1,
+    "duration": 87,
+    "score": 527,
+    "correct": 5,
+    "wrong": 0,
+    "lines": 0,
+    "guided": 0
+  },
+  "spectrum-gates|hard": {
+    "seed": 1,
+    "duration": 93,
+    "score": 2247,
+    "correct": 10,
+    "wrong": 0,
+    "lines": 0,
+    "guided": 0
+  },
+  "spectrum-gates|master": {
+    "seed": 1,
+    "duration": 148,
+    "score": 1417,
+    "correct": 10,
+    "wrong": 0,
+    "lines": 0,
+    "guided": 0
+  },
+  "chromatic-locks|easy": {
+    "seed": 1,
+    "duration": 21,
+    "score": 1090,
+    "correct": 8,
+    "wrong": 0,
+    "lines": 0,
+    "guided": 0
+  },
+  "chromatic-locks|hard": {
+    "seed": 1,
+    "duration": 78,
+    "score": 1627,
+    "correct": 16,
+    "wrong": 0,
+    "lines": 0,
+    "guided": 0
+  },
+  "chromatic-locks|master": {
+    "seed": 1,
+    "duration": 77,
+    "score": 1649,
+    "correct": 16,
+    "wrong": 0,
+    "lines": 0,
+    "guided": 0
+  },
+  "shifting-hours|easy": {
+    "seed": 1,
+    "duration": 21,
+    "score": 1885,
+    "correct": 9,
+    "wrong": 0,
+    "lines": 35,
+    "guided": 1
+  },
+  "shifting-hours|hard": {
+    "seed": 1,
+    "duration": 48,
+    "score": 1729,
+    "correct": 14,
+    "wrong": 0,
+    "lines": 71,
+    "guided": 1
+  },
+  "shifting-hours|master": {
+    "seed": 1,
+    "duration": 45,
+    "score": 3274,
+    "correct": 17,
+    "wrong": 0,
+    "lines": 114,
+    "guided": 1
+  },
+  "oneway-labyrinth|easy": {
+    "seed": 1,
+    "duration": 25,
+    "score": 1279,
+    "correct": 3,
+    "wrong": 0,
+    "lines": 41,
+    "guided": 1
+  },
+  "oneway-labyrinth|hard": {
+    "seed": 1,
+    "duration": 23,
+    "score": 1604,
+    "correct": 3,
+    "wrong": 0,
+    "lines": 45,
+    "guided": 1
+  },
+  "oneway-labyrinth|master": {
+    "seed": 1,
+    "duration": 56,
+    "score": 2305,
+    "correct": 3,
+    "wrong": 0,
+    "lines": 46,
+    "guided": 1
+  },
+  "cascade-junction|easy": {
+    "seed": 1,
+    "duration": 23,
+    "score": 759,
+    "correct": 3,
+    "wrong": 0,
+    "lines": 67,
+    "guided": 1
+  },
+  "cascade-junction|hard": {
+    "seed": 1,
+    "duration": 67,
+    "score": 1565,
+    "correct": 12,
+    "wrong": 0,
+    "lines": 194,
+    "guided": 1
+  },
+  "cascade-junction|master": {
+    "seed": 1,
+    "duration": 69,
+    "score": 2141,
+    "correct": 12,
+    "wrong": 0,
+    "lines": 277,
+    "guided": 1
+  }
+}

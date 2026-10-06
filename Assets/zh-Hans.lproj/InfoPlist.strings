@@ -1,0 +1,4 @@
+"CFBundleDisplayName" = "绘轨";
+"CFBundleName" = "绘轨";
+"NSBluetoothAlwaysUsageDescription" = "绘轨使用蓝牙连接附近的两台 Mac 进行对战。";
+"NSLocalNetworkUsageDescription" = "绘轨通过局域网发现附近玩家并进行对战。";
