@@ -297,7 +297,7 @@ bundle = {
     encoding='utf-8',
 )
 (WEB / 'official-achievements.json').write_text(
-    json.dumps(achievement_catalogue, ensure_ascii=False, separators=(',', ':')),
+    json.dumps(achievement_catalogue, ensure_ascii=False, indent=2) + '\n',
     encoding='utf-8',
 )
 from prepare_key_walls import prepare as prepare_key_walls
