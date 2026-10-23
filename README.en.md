@@ -6,6 +6,8 @@
 
 Spherail is a standalone macOS game where you draw lines to guide balls into matching holes. It reads only bundled resources and data stored on your Mac. Single-player games work offline, without Django, Redis or an account. Two nearby Macs can play against each other over a local network or Bluetooth.
 
+![Spherail home screen showing the official map selection](image/HomePage.png)
+
 The interface uses a deep green arcade palette. The official map browser features a looping carousel, animated backgrounds and map previews. Selecting a preview expands it into a centered difficulty selector; returning shrinks it back into its card. The map editor has a material palette on the left, the board in the center, and settings and the serve queue on the right. It supports drag and drop, erasing, undo and redo. Composite tiles are generated as local PNGs during the build and shared by the palette and board. Transitions respect the macOS Reduce Motion setting.
 
 New maps start with an empty board enclosed by outer walls; you place the spawn points yourself. Selecting a material shows a translucent placement preview as you move over the board. Objects cannot overlap. Holes occupy 2 × 2 cells, and right-clicking any of those cells removes the entire hole. The “?” button opens a tile guide with expandable color descriptions. Each difficulty keeps its own undo and redo history.
