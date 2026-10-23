@@ -10,3 +10,6 @@ build/
 # Python caches
 __pycache__/
 *.py[cod]
+
+AGENTS.md
+self_doc
