@@ -2,6 +2,8 @@
 
 [简体中文](README.md) | **English**
 
+[License: GPL-3.0-only](LICENSE)
+
 Spherail is a standalone macOS game where you draw lines to guide balls into matching holes. It reads only bundled resources and data stored on your Mac. Single-player games work offline, without Django, Redis or an account. Two nearby Macs can play against each other over a local network or Bluetooth.
 
 The interface uses a deep green arcade palette. The official map browser features a looping carousel, animated backgrounds and map previews. Selecting a preview expands it into a centered difficulty selector; returning shrinks it back into its card. The map editor has a material palette on the left, the board in the center, and settings and the serve queue on the right. It supports drag and drop, erasing, undo and redo. Composite tiles are generated as local PNGs during the build and shared by the palette and board. Transitions respect the macOS Reduce Motion setting.
@@ -84,3 +86,13 @@ Game code, translations and UI artwork are maintained directly in `Web/`. Base m
 `build.sh` uses the project's `.venv/bin/python` by default. Set `INKBALL_BUILD_PYTHON` to use another Python environment with the build dependencies installed. The script produces `build/Spherail.app` and `build/Spherail-macOS.dmg` and verifies the DMG checksum. The distributed app runs without Python or build tools.
 
 The `INKBALL-MAP/1` and `INKBALL-LEVEL/1` map-code prefixes and the local network service type remain compatible with earlier versions, as do existing maps and local data. The app currently uses an ad hoc signature and has not been notarized with an Apple Developer ID. On another Mac, you may need to allow it in System Settings → Privacy & Security before opening it.
+
+## License
+
+Copyright (C) 2026 rrrome and contributors.
+
+Except where otherwise stated, Spherail is free software licensed under the **GNU General Public License, version 3 only** (SPDX: `GPL-3.0-only`). You may use, modify and redistribute it under that license, including for commercial purposes. Distribution of modified versions must comply with GPLv3 requirements for license notices, change notices and complete corresponding source code. Existing third-party copyright and license notices remain in effect.
+
+Spherail is distributed WITHOUT ANY WARRANTY, including the implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See [LICENSE](LICENSE) for the full terms.
+
+Built apps include `LICENSE` and both README files in `Contents/Resources/`. When distributing an app or DMG, also provide recipients with the complete corresponding source for that exact binary version, including build scripts, for example as a source archive attached to the same release. Source repository: [rrrome/spherail](https://github.com/rrrome/spherail).

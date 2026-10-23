@@ -2,6 +2,8 @@
 
 **简体中文** | [English](README.en.md)
 
+[许可证：GPL-3.0-only](LICENSE)
+
 本目录包含独立的 macOS 绘轨（Spherail）App。运行时只读取 App 内资源和本机数据；不需要 Django、Redis、账号或互联网。对战可使用同一局域网或蓝牙，单人游玩无需联网。
 
 界面沿用网页版的深绿街机配色。官图首页保留循环滑动地图卡、地图预览与动态背景；点击预览会将地图展开为居中的难度选择页，返回时缩回卡片。地图编辑器采用左侧素材栏、中央棋盘、右侧设置与发球顺序的布局，并提供拖放、橡皮擦和撤销重做。复合方块在构建时生成为本地 PNG，素材栏与棋盘共用。页面转场会遵守 macOS 的“减少动态效果”设置。
@@ -67,3 +69,13 @@ bash scripts/build.sh
 构建所需的游戏代码、翻译和界面素材均位于 `Web/`；基础地图配置与布局位于 `Assets/Levels/config.json` 和 `Assets/Levels/maps/`，扩展地图位于 `Assets/Levels/New_Level.md`。`scripts/layouts.py` 提供本地地图推导规则；构建脚本从这些资源生成离线官图数据、编辑器图片和 App 图标。`Web/` 中的引擎与界面文件作为源文件直接维护。
 
 `build.sh` 默认使用当前项目的 `.venv/bin/python`，也可通过 `INKBALL_BUILD_PYTHON` 指定已安装构建依赖的 Python。脚本生成 `build/Spherail.app` 与 `build/Spherail-macOS.dmg`，并验证 DMG 校验和。发行的 App 无需 Python 或构建工具。地图分享代码的 `INKBALL-MAP/1`、`INKBALL-LEVEL/1` 前缀和局域网服务类型保留，旧地图与本机数据仍可使用。App 目前采用本地临时签名，未做 Apple Developer ID 公证，跨机安装时可能需要在 macOS“隐私与安全性”中允许打开。
+
+## 许可证
+
+Copyright (C) 2026 rrrome and contributors.
+
+除另有明确声明外，本项目采用 **GNU General Public License v3.0，仅第 3 版**（SPDX：`GPL-3.0-only`）。你可以按该许可证使用、修改和再分发本项目，包括商业使用。分发修改版时，须遵守 GPLv3 对许可证、修改声明及完整对应源码的要求。既有第三方版权和许可声明继续有效。
+
+本项目不提供任何担保，包括适销性或特定用途适用性的担保。完整条款见 [LICENSE](LICENSE)。
+
+构建的 App 在 `Contents/Resources/` 中附带 `LICENSE` 及中英文 README。发布 App 或 DMG 时，应同时向接收者提供与该二进制版本匹配的完整对应源码（包括构建脚本），例如在同一 Release 附上对应源码压缩包。项目源码仓库：[rrrome/spherail](https://github.com/rrrome/spherail)。

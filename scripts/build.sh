@@ -27,6 +27,7 @@ cp .build/release/InkBallMac "$APP/Contents/MacOS/Spherail"
 cp Assets/Spherail.icns "$APP/Contents/Resources/Spherail.icns"
 cp -R Assets/zh-Hans.lproj "$APP/Contents/Resources/"
 cp -R Web "$APP/Contents/Resources/Web"
+cp LICENSE README.md README.en.md "$APP/Contents/Resources/"
 cp AppInfo.plist "$APP/Contents/Info.plist"
 codesign --force --deep --sign - "$APP"
 mkdir -p build/dmg-root
