@@ -1,0 +1,101 @@
+{
+  "ball0.png": [
+    "5773bf0f9bf4e8d82e711ea1d078482abe2d8403670f33246107c074f0424c29"
+  ],
+  "ball1.png": [
+    "ce79cc748ca1eb03c6f4751a4f5a782ac0e618fcb02dbe208afbfa09423b50aa"
+  ],
+  "ball2.png": [
+    "9c592ad102ac454333cfbb134f9e0d381586801b8f7524458de7be32e8705369"
+  ],
+  "ball3.png": [
+    "1e07897eb85024350905bd664fae979f1e000be4fba8b4f60e838e3eb1226c1c"
+  ],
+  "ball4.png": [
+    "d34d4bed4f29afa90fa96acd9fa5d372c7a73eff6a6faad105a49f2b387493e2"
+  ],
+  "brick0.png": [
+    "8ec75b650f2dfbf8029924d2f2003de922cb40fe7d31588fa9a25a4f5555c438"
+  ],
+  "brick0_1.png": [
+    "d8a09070ab63b27cff1c65f90a16bc1979180692d906247400efe3455f6a114d"
+  ],
+  "brick0_2.png": [
+    "6d353d8ebfc149f7c4b2f9ab12081a53fa02df6c60c8e9d6227a265809cc15be"
+  ],
+  "brick1.png": [
+    "094ce98e5f0d7b8ef847ac346e47db94ca01108d0822eb944ea386e0d16302d1"
+  ],
+  "brick1_1.png": [
+    "d5e0f242a5189f14d42a42ea1613ea106525fd93678fc0e8d65a9c8e05b9af4f"
+  ],
+  "brick1_2.png": [
+    "02ccb74658681de89a9ba551270cd92fc7e523a18a42cc9a2cfe5a31d5a506f5"
+  ],
+  "brick2.png": [
+    "5ff3e6767328af02c458596fbfcd00056479c3c5961d5c429be4e200efd67d1c"
+  ],
+  "brick2_1.png": [
+    "976299c4a25811327f6d65411cfc67291864c6e0f71ad850be0e372a1ba59f7e"
+  ],
+  "brick2_2.png": [
+    "e78def8671e1cb982fc664ab15b0f9bf461407f7f4dcb59b413e5416ee7d92ab"
+  ],
+  "brick3.png": [
+    "bc7bce809e0bf5f7430bdf70c7d4118c6a01fdae3d0411b4d7a133796637a9b3"
+  ],
+  "brick3_1.png": [
+    "8ae8c17231b30c4694c31d86d6ec357ba1101ad5f566938af8f7ece06ab56ed5"
+  ],
+  "brick3_2.png": [
+    "34bf6e7261b7eb8ffdcc7ef444ad438fbabf7641f22bb4024b93ff4fc0b23a75"
+  ],
+  "brick4.png": [
+    "8fe15ede99db233162e19bd7e7a9812c195f111d95791c09859cf6ed0c3a9a27"
+  ],
+  "brick4_1.png": [
+    "d4707249fa2620b3b48d5fb231a7ecda41a6880211e9e8347cba241b1ccc824c"
+  ],
+  "brick4_2.png": [
+    "ef70173945d2d287cad02a41fe2ba8b7bde63f7971f44f686a97cd5bc8ecf829"
+  ],
+  "entrypoint.png": [
+    "ea28aedc549264e0d50b1afca5af6557fcd48f7ab83caa635e083c8f48455fed"
+  ],
+  "hole0.png": [
+    "52ebca3de89e94c7f544a95df5e9d0d2d13e7bb002c71721e02b27ca0b14da91"
+  ],
+  "hole1.png": [
+    "c264eaf1c6b97af1b2050468d9dc76dc93f8defcc0ce3440dcdd3c85f4e1b27f"
+  ],
+  "hole2.png": [
+    "1b792b3e222a03bdaebc36906d43ad910e6f72759d97528b2bc0e615aa1db491"
+  ],
+  "hole3.png": [
+    "0c9fc180e96817b643c154c70a76aaee4b05aabea0f72afd1ec6e91ec6638dc0"
+  ],
+  "hole4.png": [
+    "d556d88b8981adeddaefba93329bd18a230fbaf8b60930029e68e259f62e1556"
+  ],
+  "inkball_spritesheet.png": [
+    "a971559b363af0add4ce62302914f2124ab42f1d02367505e2c724dbf71795c9"
+  ],
+  "tile.png": [
+    "fd0d05e23b505dc81deae736c166fce96cd1118a2e72bccb3ab412acd9ff076c"
+  ],
+  "wall0.png": [
+    "1e153a15da2f72583052171405a44c9fb73d3f552c82d74753c6b2e9dd8d0c10"
+  ],
+  "wall1.png": [
+    "8aa0ce01e9cbfdd17de021961003808e2560cca89f592a26c94dfb1c8dfee8f5"
+  ],
+  "wall2.png": [
+    "9ae127566aca98b6c8277310b1f79747a15f306e3765939cad4739589dc5c26f"
+  ],
+  "wall3.png": [
+    "370fbe6bd0867fd9db18aa76da0815978047232e3f2375f5b935e82f16c7c791"
+  ],
+  "wall4.png": [
+    "62e126a58f8883f426c515642f83f4c9e30a90d30b4060b102ef949924f7a57a"
+  ]
+}

@@ -1,4 +1,6 @@
-# New_Level.md 导入地图
+# 官方地图资源
+
+`config.json` 和 `maps/` 保存五张基础地图的配置与原始布局。`scripts/layouts.py` 根据难度生成布局；`scripts/prepare_assets.py` 将基础地图和下列扩展地图合并到 `Web/official-data.js`，并生成 `Web/official-achievements.json`。全部输入均保存在本仓库内。
 
 `New_Level.md` 是用户提供资源的原样副本，仅用于 App 构建。编译过程不修改布局、球序、总时间、发球间隔、限时墙编码或作者历史。
 

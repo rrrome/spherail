@@ -1,0 +1,18 @@
+X X X X X X X X X X X X X X X X X X 
+X H0  H1  H2  H3  H4    X     H0  X 
+X                       X         X 
+X                       X         X 
+X         K0            C2        X 
+X             K1                  X 
+X 1       B3                    3 X 
+X 1   C1                    C3  3 X 
+X 1                             3 X 
+X 1         K3                  3 X 
+X 2                             4 X 
+X 2           B2                4 X 
+X 2                             4 X 
+X 2             S               4 X 
+X X X X X X X X X X X T   G0      X 
+X   B0  B0                        X 
+X   S B0                          X 
+X X X X X X X X X X X X X X X X X X 

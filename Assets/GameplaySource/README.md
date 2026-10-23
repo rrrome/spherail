@@ -8,4 +8,6 @@ does not read artwork from the original scaffold.
 The App build copies its 56 generated gameplay sprites into `Web/img/inkball`
 and excludes the scaffold sprite sheet. Three existing ambient category marks
 remain part of the App UI. `scripts/verify_gameplay_sprites.py` checks the set,
-dimensions, packaging, and available source asset hashes.
+dimensions, packaging, and reference asset hashes recorded in
+`reference-hashes.json`. This manifest stores hashes only; verification uses
+the checked-in manifest without loading reference artwork.

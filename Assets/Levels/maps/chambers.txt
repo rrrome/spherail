@@ -1,0 +1,18 @@
+X X X X X X X X X X X X X X X X X X 
+X H0          X     X         H1  X 
+X         K0  X     X             X 
+X             S     S             X 
+X     B1      X     X     B2      X 
+X             X     X             X 
+X             X     X             X 
+X X X X X X X         X X X X X X X 
+X         T                       X 
+X                 H2              X 
+X             K0      C2          X 
+X           U             D       X 
+X                 S               X 
+X             Y1    V1            X 
+X             G0                  X 
+X                                 X 
+X                                 X 
+X X X X X X X X X X X X X X X X X X 

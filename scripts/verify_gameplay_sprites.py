@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from pathlib import Path
 
 from PIL import Image, ImageChops
@@ -12,7 +13,7 @@ from generate_gameplay_sprites import accelerator_chevrons
 APP = Path(__file__).resolve().parents[1]
 RUNTIME = APP / 'Web' / 'img' / 'inkball'
 OWNED = APP / 'Assets' / 'Gameplay'
-REFERENCE = APP.parent / 'ELEC3609Code' / 'references'
+REFERENCE_HASHES = json.loads((APP / 'Assets/GameplaySource/reference-hashes.json').read_text())
 
 
 def digest(path: Path) -> str:
@@ -44,13 +45,7 @@ def verify() -> None:
             assert image.size == expected, (name, image.size, expected)
         assert digest(owned) == digest(runtime), f'{name} is not App-owned art'
 
-        sources = (
-            REFERENCE / 'inkball_scaffold_final' / 'src' / 'main' / 'resources' / 'inkball' / name,
-            REFERENCE / 'inkball-sprites-original' / name,
-        )
-        for source in sources:
-            if source.exists():
-                assert digest(runtime) != digest(source), f'{name} matches source art'
+        assert digest(runtime) not in REFERENCE_HASHES.get(name, []), f'{name} matches reference art'
 
     for name in ('ambient_community.png', 'ambient_diy.png', 'ambient_favorite.png'):
         assert (RUNTIME / name).exists(), f'Missing {name}'

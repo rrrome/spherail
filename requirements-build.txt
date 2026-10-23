@@ -1,0 +1,2 @@
+# Used by the resource generators and icon builder (Python 3.10+).
+Pillow==12.3.0

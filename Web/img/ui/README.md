@@ -21,42 +21,27 @@ and accessibility. Surfaces are drawn with CSS, keeping downloads small.
 | `pause-home.svg`, `pause-restart.svg`, `pause-resume.svg` | Reusable teal, cream and orange key surfaces |
 
 `community.png` is retained for compatibility; the current header uses the SVG.
-Map materials under `static/img/inkball/` must not be restyled with these tokens.
+Board materials in `Web/img/inkball/` use their own palette and generator.
 
 ## Implementation
 
-- `static/css/style.css`: shared layout, navigation, messages, and error pages.
-  `match-room.css`, `gameplay.css`, `map-pages.css`, `result.css`, and
-  `community-editor.css` own their page geometry and animation states;
-  `responsive.css` contains the earlier shared and mobile overrides.
-  `ui-system.css` applies the shared skin and later responsive overrides.
-- `static/css/scene-transition.css` / `static/js/scene-transition.js`: ordinary
-  route transitions, with a branded shutter on browsers without cross-document
-  transitions. The old frame stays visible beneath the entering snapshot.
-- Existing carousel, board FLIP, ambient, pause, result and editor hand-offs
-  retain their timing. Scene transitions skip those hand-offs.
-- The home counter observes the existing `.is-center` class. It never handles
-  input, changes selection, or writes to the carousel.
-- The editor reserves space for the real toolbar, difficulty row and undo dock;
-  its existing FLIP animation targets the measured board rectangle.
-- Only the 64px Canvas HUD is restyled. Queue motion and level drawing are intact.
-- Confirmations still use awaited `InkballUI.confirm` / `InkballUI.prompt`.
-  AJAX forms and cancelled editor navigation bypass the scene helper.
-- `static/js/fullscreen.js` requests fullscreen only from the shared button.
-  In-app hops keep that document fullscreen via a same-origin overlay until Esc.
-  A cold load never auto-enters. The result template omits this control.
+- `Web/desktop.css`, `desktop-web.css` and `desktop.js` define the desktop layout,
+  navigation, map editor and view transitions.
+- `Web/js/map-home.js`, `map-home-preview.js` and `map-home-ambient.js` implement
+  the carousel, previews and ambient animation.
+- `Web/js/inkball/` contains the game engine, Canvas HUD and match rendering.
+- `Web/desktop-i18n.js` and `Web/i18n/` provide English/Chinese interface text.
 
-Cross-document transition reference:
-[Chrome's MPA transition documentation](https://developer.chrome.com/docs/web-platform/view-transitions/cross-document).
+The files in `Web/` are maintained directly in this repository. Resource
+preparation regenerates board sprites, editor tiles, map data and translation
+bundles while preserving the engine and UI source files.
 
 ## Verification
 
-```sh
-node --test tests/js/*.test.js
-.venv/bin/python manage.py check
-.venv/bin/python manage.py test --noinput
-```
+Run from the project root:
 
-`scene_transition.test.js` covers delayed fallback navigation, native transitions,
-existing-animation opt-out, form submission, duplicate clicks, modifier keys,
-reduced motion, storage denial, stale hand-offs and cancelled navigation recovery.
+```sh
+node scripts/verify_expansion.mjs
+swift test
+.venv/bin/python scripts/verify_gameplay_sprites.py
+```

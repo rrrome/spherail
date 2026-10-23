@@ -45,24 +45,23 @@
 
 ## 构建与测试
 
-从本目录执行：
+构建需要 macOS、Xcode Command Line Tools（Swift）、Python 3.10+（建议 3.12）和 `rsvg-convert`（通过 `brew install librsvg` 安装）。验证地图回放还需要 Node.js。
+
+首次在本目录初始化构建环境：
 
 ```bash
+bash scripts/setup.sh
+```
+
+脚本会创建当前项目的 `.venv`，并安装 `requirements-build.txt` 中固定版本的 Pillow。可通过 `PYTHON=python3.12 bash scripts/setup.sh` 指定 Python。随后执行：
+
+```bash
+.venv/bin/python -m unittest discover -s Tests/ResourceGeneration
 node scripts/verify_expansion.mjs
 swift test
 bash scripts/build.sh
 ```
 
-构建时需要旁边的 `ELEC3609Code` 仓库及其 `.venv`（包含 Pillow），以及 `rsvg-convert`，用原项目的地图推导规则生成离线官图数据、编辑器图片和 App 图标；发行的 App 不依赖这些工具。`build.sh` 生成 `.app` 与 `.dmg`，并校验 DMG 校验和。地图分享代码的 `INKBALL-MAP/1`、`INKBALL-LEVEL/1` 前缀和局域网服务类型保留，旧地图与本机数据仍可使用。App 目前采用本地临时签名，未做 Apple Developer ID 公证，跨机安装时可能需要在 macOS“隐私与安全性”中允许打开。
+构建所需的游戏代码、翻译和界面素材均位于 `Web/`；基础地图配置与布局位于 `Assets/Levels/config.json` 和 `Assets/Levels/maps/`，扩展地图位于 `Assets/Levels/New_Level.md`。`scripts/layouts.py` 提供本地地图推导规则；构建脚本从这些资源生成离线官图数据、编辑器图片和 App 图标。`Web/` 中的引擎与界面文件作为源文件直接维护。
 
-## 实机验收记录（待填）
-
-| 项目 | 结果 |
-| --- | --- |
-| 两台 Mac 的型号、系统版本 | 待测 |
-| 关闭 Wi-Fi 的 BLE 发现和连接 | 待测 |
-| 同一 Wi-Fi 发现、去重和完整对战 | 待测 |
-| Wi-Fi 中断后切换蓝牙 | 待测 |
-| 邀请、自动地图传输、倒计时和结果一致 | 待测 |
-| 连续对战 10 分钟、延迟与吞吐 | 待测 |
-| 主动退出、蓝牙关闭和 20 秒重连 | 待测 |
+`build.sh` 默认使用当前项目的 `.venv/bin/python`，也可通过 `INKBALL_BUILD_PYTHON` 指定已安装构建依赖的 Python。脚本生成 `build/Spherail.app` 与 `build/Spherail-macOS.dmg`，并验证 DMG 校验和。发行的 App 无需 Python 或构建工具。地图分享代码的 `INKBALL-MAP/1`、`INKBALL-LEVEL/1` 前缀和局域网服务类型保留，旧地图与本机数据仍可使用。App 目前采用本地临时签名，未做 Apple Developer ID 公证，跨机安装时可能需要在 macOS“隐私与安全性”中允许打开。

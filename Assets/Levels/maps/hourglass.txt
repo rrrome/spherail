@@ -1,0 +1,18 @@
+4 X X X X X X X X X X X X X X X X 4 
+X 4 X           H1            X 4 X 
+X X 4 X                     X 4 X X 
+X   X 4 X                 X 4 X   X 
+X     X 4 X             X 4 X     X 
+X       X 4 X         X 4 X       X 
+X         X             X         X 
+X     B1  S             S     H0  X 
+X       K0          C2            X 
+X         T       u               X 
+X         S             S   B2    X 
+X         X             X         X 
+X       X 4 X         X 4 X       X 
+X     X 4 X             X 4 X     X 
+X   X 4 X                 X 4 X   X 
+X X 4 X           H2        X 4 X X 
+X 4 X                         X 4 X 
+4 X X X X X X X X X X X X X X X X 4 
