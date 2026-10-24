@@ -1,6 +1,11 @@
 #!/bin/bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
+if ! command -v node >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
+  echo 'Install Node.js 18+ (including npm) before setting up the build.' >&2
+  exit 1
+fi
+node -e 'if (Number(process.versions.node.split(".")[0]) < 18) { console.error("Node.js 18+ is required"); process.exit(1); }'
 
 # Prefer the tested Python version, then accept any installed Python 3.10+.
 BUILD_PYTHON="${PYTHON:-}"
@@ -20,6 +25,8 @@ fi
 "$BUILD_PYTHON" -c 'import sys; sys.exit("Python 3.10+ is required" if sys.version_info < (3, 10) else 0)'
 "$BUILD_PYTHON" -m venv .venv
 .venv/bin/python -m pip install -r requirements-build.txt
+npm ci
+npm run build:3d
 if ! command -v rsvg-convert >/dev/null 2>&1; then
   echo 'Install the icon renderer with: brew install librsvg' >&2
   exit 1

@@ -54,8 +54,9 @@
       <canvas class="page-ambient" data-map-ambient="still" aria-hidden="true"></canvas>
       <div class="map-detail__hero" id="detail-hero"><canvas id="detail-floor" class="map-detail__hero-floor" width="576" height="576" aria-hidden="true"></canvas><canvas id="detail-board" class="map-detail__hero-canvas" width="576" height="576" aria-label="地图预览"></canvas><canvas id="detail-outgoing" class="map-detail__hero-difference" width="576" height="576" aria-hidden="true" hidden></canvas><canvas id="detail-incoming" class="map-detail__hero-difference" width="576" height="576" aria-hidden="true" hidden></canvas></div>
       <div class="map-detail__dim"></div>
+      <div class="map-detail__render3d" id="detail-3d-layer" hidden><iframe id="detail-3d-frame" title="3D 地图预览" loading="eager"></iframe></div>
       <button id="detail-back" class="map-detail__back icon-button" aria-label="返回地图" title="返回"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m17 7-9 9 9 9M9 16h16"/></svg></button>
-      <div id="detail-export-tools" class="map-detail__export-tools" hidden><button id="detail-export" class="secondary">导出地图</button><p id="detail-export-status" role="status" aria-live="polite"></p></div>
+      <div id="detail-export-tools" class="map-detail__export-tools" hidden><button id="detail-3d-toggle" class="secondary" aria-pressed="false">3D</button><button id="detail-export" class="secondary">导出地图</button><p id="detail-export-status" role="status" aria-live="polite"></p><p id="detail-3d-status" role="status" aria-live="polite" hidden></p></div>
       <div class="map-detail__ui">
         <p class="arcade-eyebrow" id="detail-type">官方地图</p>
         <h1 class="map-detail__name" id="detail-name"></h1>
@@ -176,7 +177,7 @@
         <label for="profile-crop-zoom">缩放<input id="profile-crop-zoom" type="range" min="1" max="3" step="0.01" value="1"></label></div>
       <p class="profile-avatar__note">头像保存在本机；接受对战邀请后会发送给对方。</p></section>
     <p id="profile-status" role="status"></p>
-    <div class="profile-card__footer"><button id="profile-save" type="button" class="primary">保存资料</button><button data-close="profile-dialog" type="button" class="secondary">取消</button></div>
+    <div class="profile-card__footer"><small id="profile-version" class="profile-card__version" translate="no" aria-label="App version"></small><button id="profile-save" type="button" class="primary">保存资料</button><button data-close="profile-dialog" type="button" class="secondary">取消</button></div>
   </div></dialog>
   <dialog id="code-dialog"><div class="dialog-body"><h2 id="code-title">地图代码</h2><textarea id="map-code" rows="13" spellcheck="false"></textarea>
     <p id="code-status" role="status"></p><div class="actions"><button id="code-action">导入</button>
@@ -197,6 +198,7 @@
   <script src="js/inkball/app.js"></script>
   <script src="js/inkball/match-sync.js"></script>
   <script src="js/community-editor-state.js"></script><script src="js/community-editor-history.js"></script>
+  <script src="js/map-render-preview.js"></script><script src="js/desktop-3d.js"></script>
   <script src="desktop.js"></script>
   <script src="js/map-preview.js"></script><script src="js/map-home-preview.js"></script>
   <script src="js/map-home-ambient.js"></script><script src="js/map-home.js"></script>

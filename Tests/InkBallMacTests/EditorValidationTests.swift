@@ -6,6 +6,7 @@ extension WebSmokeTests {
     func testServeQueueRequiresSpawnPointBeforeSavingOrPlaytesting() async throws {
         _ = NSApplication.shared
         let config = WKWebViewConfiguration()
+        configureAppResources(config)
         let bridge = MockBridge()
         config.userContentController.add(bridge, name: "inkball")
         let webView = WKWebView(frame: NSRect(x: 0, y: 0, width: 1100, height: 780), configuration: config)
@@ -13,9 +14,7 @@ extension WebSmokeTests {
         let loaded = expectation(description: "Editor validation page loads")
         let navigation = Navigation(loaded)
         webView.navigationDelegate = navigation
-        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-        let web = root.appendingPathComponent("Web", isDirectory: true)
-        webView.loadFileURL(web.appendingPathComponent("index.html"), allowingReadAccessTo: web)
+        loadApp(webView)
         await fulfillment(of: [loaded], timeout: 10)
         try await awaitTrue(webView, "document.querySelector('[data-carousel-total]').textContent==='/ 10'")
         _ = try await evaluate(webView, """

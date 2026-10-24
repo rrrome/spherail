@@ -50,6 +50,7 @@
   let resultRevealTimer = null;
   const editorImages = new Map();
   let selectedSpec = null;
+  let detail3D = null;
 
   const pending = new Map();
   const eventListeners = new Map();
@@ -268,6 +269,7 @@
   }
   function show(route) {
     const previous = all('.view').find((section) => !section.hidden)?.id.replace('-view', '');
+    if (route !== 'detail') detail3D?.dispose();
     if (route !== 'editor') closeEditorGuide();
     if (route !== 'play') closePlayGuide();
     if (route !== 'play' && $('#play-view').hidden === false) stopGame();
@@ -567,6 +569,7 @@
       tabs.append(button);
     }
     updateDetailPreview(map, level);
+    detail3D?.update(map, detailDifficulty);
   }
 
   function updateDetailPreview(map, level) {
@@ -1497,7 +1500,7 @@
     }, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 420);
   }
 
-  async function showResult(url) {
+  async function showResult(url, lines = game?.linesDrawn || 0) {
     const values = new URL(url, window.location.href).searchParams;
     const score = Number(values.get('score') || 0);
     const duration = Number(values.get('time') || 0);
@@ -1512,7 +1515,7 @@
     if (!run.fromEditor && !(run.inMatch && !run.map.official && !customMaps.some((map) => map.id === run.map.id))) {
       try {
         const record = await native.call('recordResult', { mapID: run.map.id, difficulty: run.difficulty,
-          score, cleared, duration, correct, wrong, lines: game?.linesDrawn || 0 });
+          score, cleared, duration, correct, wrong, lines });
         best = record.bestScore;
         newRecord = !!record.newRecord;
         records[`${run.map.id}|${run.difficulty}`] = record;
@@ -1573,6 +1576,32 @@
   async function initialize() {
     const data = await native.call('bootstrap');
     profile = data.profile; customMaps = data.maps; records = data.records;
+    const appVersion = data.appInfo?.version || 'Development';
+    $('#profile-version').textContent = `v${appVersion}`;
+    $('#profile-version').title = `Spherail ${appVersion}${data.appInfo?.build ? ` (${data.appInfo.build})` : ''}`;
+    detail3D = InkballDesktop3D.create({
+      root: $('#detail-view'), hero: $('#detail-hero'), layer: $('#detail-3d-layer'),
+      frame: $('#detail-3d-frame'), toggle: $('#detail-3d-toggle'), duel: $('#detail-duel'), status: $('#detail-3d-status'),
+      getBoot(difficulty) {
+        const map = detailMap, level = clone(map.difficulties[difficulty]);
+        return { language: profile.language, catalog: [{ slug: map.id, name: displayName(map),
+          levels: difficultyOptions(map).map(tier => ({ difficulty: tier, label: labels[tier] })) }],
+          selected: { map: map.id, map_name: displayName(map), difficulty, difficulty_label: labels[difficulty],
+            personalMap: !map.official, authenticated: false, result_url: 'desktop-result',
+            home_url: 'desktop-return', return_url: 'desktop-return', layout: level.layout_content, config: level } };
+      },
+      onStart() {
+        stopGame();
+        closePlayGuide();
+        currentPlay = { map: detailMap, difficulty: detailDifficulty, fromEditor: false, inMatch: false, renderMode: '3d' };
+      },
+      onResult(url, lines) { showResult(url, lines).catch(report); },
+      onHome() {
+        detail3D.dispose();
+        if (detailMap.official) show('maps');
+        else show('detail');
+      },
+    });
     achievements = data.achievements || {}; match = data.match;
     window.InkballDesktopI18n.setLanguage(profile.language);
     updateProfileUI(); renderMaps(); renderMatch(); renderPalette(); renderEditorGuide(); renderPlayGuide(); show('maps');
@@ -1590,7 +1619,9 @@
     }).observe(track, { subtree: true, attributes: true, attributeFilter: ['class'] });
     $('#detail-back').addEventListener('click', leaveMapDetail);
     window.addEventListener('resize', () => { if (!$('#detail-view').hidden) positionDetailHero(); });
-    $('#detail-start').addEventListener('click', run(() => play(detailMap, detailDifficulty, false)));
+    $('#detail-start').addEventListener('click', run(() => {
+      if (!detail3D.start()) return play(detailMap, detailDifficulty, false);
+    }));
     $('#detail-duel').addEventListener('click', openMatchEntry);
     $('#detail-export').addEventListener('click', run(() => copyDifficultyCode(detailMap.difficulties[detailDifficulty], '#detail-export-status')));
     $('#delete-map-cancel').addEventListener('click', () => $('#delete-map-dialog').close());
@@ -1871,7 +1902,15 @@
     });
     $('#match-finish-leave').addEventListener('click', run(leaveActiveMatch));
     $('#match-watch-leave').addEventListener('click', run(leaveActiveMatch));
-    $('#result-again').addEventListener('click', run(() => leaveResult(() => play(currentPlay.map, currentPlay.difficulty, currentPlay.fromEditor))));
+    $('#result-again').addEventListener('click', run(() => leaveResult(() => {
+      if (currentPlay.renderMode === '3d') {
+        detailMap = currentPlay.map;
+        detailDifficulty = currentPlay.difficulty;
+        show('detail');
+        detail3D.setMode('3d');
+        detail3D.start();
+      } else play(currentPlay.map, currentPlay.difficulty, currentPlay.fromEditor);
+    })));
     $('#result-continue').addEventListener('click', () => leaveResult(() => {
       if (currentPlay?.inMatch) native.call('matchLeave').catch(report);
       show(currentPlay.fromEditor ? 'editor' : currentPlay.map.official ? 'maps' : 'personal');
@@ -1879,7 +1918,7 @@
     native.on('matchState', updateMatch);
     native.on('matchPeer', (peer) => { peers.set(peer.id, { ...peer, seenAt: Date.now() }); renderMatch(); });
     native.on('matchInvitation', run(async (state) => {
-      if (currentPlay && !$('#play-view').hidden) { await native.call('matchDecline'); return; }
+      if (currentPlay && (!$('#play-view').hidden || detail3D?.playing)) { await native.call('matchDecline'); return; }
       matchEntry = null;
       updateMatch(state);
       const dialog = $('#match-invite-dialog');

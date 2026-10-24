@@ -8,6 +8,16 @@ Spherail is a standalone macOS game where you draw lines to guide balls into mat
 
 ![Spherail home screen showing the official map selection](image/HomePage.png)
 
+The lower-left corner of the player profile shows the current app version, read directly from the application bundle.
+
+## 3D maps
+
+Use the **3D / 2D** button in the upper-right corner of an official or custom map's difficulty screen. The 3D mode preserves the reference implementation's models, materials, lighting, camera parameters and controls. Previews transition from flat to three-dimensional; switching difficulty keeps unchanged tiles in place while animating changed models. Starting a game continues in the same scene.
+
+Draw and erase lines in perspective, rotate and zoom the camera, lock the view, pause, restart and finish a level. Results and achievements are saved locally, and restarting from the result screen keeps the game in 3D. As in the reference implementation, duels are unavailable in 3D mode; switch to 2D to use LAN or Bluetooth multiplayer.
+
+Three.js is pinned to the reference's `0.164.1`. Renderer code and runtime textures are bundled in the app, so playing needs no CDN or internet connection. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for third-party licenses and texture credits.
+
 The interface uses a deep green arcade palette. The official map browser features a looping carousel, animated backgrounds and map previews. Selecting a preview expands it into a centered difficulty selector; returning shrinks it back into its card. The map editor has a material palette on the left, the board in the center, and settings and the serve queue on the right. It supports drag and drop, erasing, undo and redo. Composite tiles are generated as local PNGs during the build and shared by the palette and board. Transitions respect the macOS Reduce Motion setting.
 
 New maps start with an empty board enclosed by outer walls; you place the spawn points yourself. Selecting a material shows a translucent placement preview as you move over the board. Objects cannot overlap. Holes occupy 2 × 2 cells, and right-clicking any of those cells removes the entire hole. The “?” button opens a tile guide with expandable color descriptions. Each difficulty keeps its own undo and redo history.
@@ -63,8 +73,8 @@ Build requirements:
 
 - macOS and Xcode Command Line Tools, including Swift.
 - Python 3.10 or later; Python 3.12 is recommended.
+- Node.js 18 or later, including npm, for the 3D bundle and JavaScript tests.
 - `rsvg-convert`, installed with `brew install librsvg`.
-- Node.js for map replay verification.
 
 Initialize the build environment from the project root:
 
@@ -72,12 +82,13 @@ Initialize the build environment from the project root:
 bash scripts/setup.sh
 ```
 
-This creates a project-local `.venv` and installs the pinned Pillow version from `requirements-build.txt`. To choose a Python executable, run `PYTHON=python3.12 bash scripts/setup.sh`.
+This creates a project-local `.venv`, installs the pinned Pillow version from `requirements-build.txt`, and runs `npm ci` to install the locked JavaScript build dependencies. `npm run build:3d` bundles Three.js and the 3D renderer for local WKWebView loading. To choose a Python executable, run `PYTHON=python3.12 bash scripts/setup.sh`.
 
 Then run:
 
 ```bash
 .venv/bin/python -m unittest discover -s Tests/ResourceGeneration
+npm run test:3d
 node scripts/verify_expansion.mjs
 swift test
 bash scripts/build.sh

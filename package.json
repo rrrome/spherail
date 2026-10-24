@@ -1,0 +1,13 @@
+{
+  "name": "spherail-build",
+  "private": true,
+  "license": "GPL-3.0-only",
+  "scripts": {
+    "build:3d": "node scripts/build_3d.mjs",
+    "test:3d": "node --test Tests/JavaScript/*.test.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "three": "0.164.1"
+  }
+}

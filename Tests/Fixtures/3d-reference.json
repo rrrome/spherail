@@ -1,0 +1,27 @@
+{
+  "description": "Reference 3D geometry, materials, camera and preview-loop implementation, normalized only for asset URLs.",
+  "rendering_source_sha256": "96119cad0250a1b5d277f2309a2c869ec0db454acfd6e5c19cc63c4b8a3ffc18",
+  "three_version": "0.164.1",
+  "preview_transition_ms": 720,
+  "camera_transition_ms": 920,
+  "runtime_assets": {
+    "Web/css/prototype-3d.css": "0495a5d6bee21a6f06fb630762a0d824563cedc04687d4904c561cf2b5a583d8",
+    "Web/textures/prototype-3d/kenney-grid.png": "72bb9b3cb2743de3f0eaba2188c931370085572e627168821310008f46dafccd",
+    "Web/textures/prototype-3d/ball-matcap.png": "63b3db124f73365f5991a15f7d48e66f48d1c0e83a2f514371e622a5b137cf6d",
+    "Web/textures/prototype-3d/low/metal-roughness.webp": "d9ae237808c3ce3b43da458154eff68a3d48bd4d5df9978c103d518af47ca5b3",
+    "Web/textures/prototype-3d/low/plastered-wall-roughness.webp": "2de475c0c8e70793faa8708cd9f801c611b5626d7fbcc744902d65c76a0e828c",
+    "Web/textures/prototype-3d/low/hole-plate-normal.webp": "e7bf344c0c5cbd6e83c2134b8eb50fe57e71b3394133662f27a49f47dd0d12e7",
+    "Web/textures/prototype-3d/low/plastered-wall-diffuse.webp": "00d88853b7a969164087284fb3e7cefe77aefe7ea56a93ef34f291a4396afa90",
+    "Web/textures/prototype-3d/low/plastered-wall-ao.webp": "a8c72166250ab5a5ebe09ea5cd5c8159952853b8440575a14845396dd0dbb993",
+    "Web/textures/prototype-3d/low/metal-metalness.webp": "6f7666274704840e9cfcf87613693895073f3dfe59ac2446974837448b311607",
+    "Web/textures/prototype-3d/low/hole-plate-color.webp": "eec95c74931c063987d50c3c531f782b1763c648d0586b8eb6aa12fee65bb450",
+    "Web/textures/prototype-3d/low/hole-metal-color.webp": "955dfad0de3b574ad1a23746e2da303f15f44346b7fa18024168f0d99190c929",
+    "Web/textures/prototype-3d/low/hole-plate-metalness.webp": "9571a1ebdb9cf63d124c436700a158da376ea09103c2cc5b6a28ed97371cc4fc",
+    "Web/textures/prototype-3d/low/metal-normal.webp": "7229f6222b56bf243add0a5440c64f87cde2d42c98eb2216c4d6fbc21d0ebd9f",
+    "Web/textures/prototype-3d/low/hole-metal-metalness.webp": "2532ed6396421a2a66ec5c585ff9adf6f9de871703ecc9e53908511767103822",
+    "Web/textures/prototype-3d/low/hole-plate-roughness.webp": "8e96c01ad2535036d730115b77b55b5d78282a92eb7174a221db3e37288719c8",
+    "Web/textures/prototype-3d/low/plastered-wall-normal.webp": "410659a2cb1abbd3daad9cc1b6a24e3f709693dc37e314255021ba7af8f99207",
+    "Web/textures/prototype-3d/low/hole-metal-normal.webp": "0965b8e10036853bc5642c1929e9a1451249127d452559104aef554ba8d1609f",
+    "Web/textures/prototype-3d/low/hole-metal-roughness.webp": "62313d3cdda3af1ede0c74d9ce18bc5242937f78f8df4963bef9e2f1e743a068"
+  }
+}

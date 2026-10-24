@@ -10,12 +10,13 @@ fi
   echo 'Install build dependencies with: bash scripts/setup.sh' >&2
   exit 1
 }
-for tool in swift rsvg-convert iconutil codesign hdiutil; do
+for tool in swift rsvg-convert iconutil codesign hdiutil node npm; do
   if ! command -v "$tool" >/dev/null 2>&1; then
     echo "Missing build tool: $tool (see README.md)." >&2
     exit 1
   fi
 done
+npm run build:3d
 "$PYTHON" scripts/prepare_assets.py
 "$PYTHON" scripts/verify_gameplay_sprites.py
 "$PYTHON" scripts/build_icon.py
@@ -27,7 +28,7 @@ cp .build/release/InkBallMac "$APP/Contents/MacOS/Spherail"
 cp Assets/Spherail.icns "$APP/Contents/Resources/Spherail.icns"
 cp -R Assets/zh-Hans.lproj "$APP/Contents/Resources/"
 cp -R Web "$APP/Contents/Resources/Web"
-cp LICENSE README.md README.en.md "$APP/Contents/Resources/"
+cp LICENSE README.md README.en.md THIRD_PARTY_NOTICES.md "$APP/Contents/Resources/"
 cp AppInfo.plist "$APP/Contents/Info.plist"
 codesign --force --deep --sign - "$APP"
 mkdir -p build/dmg-root

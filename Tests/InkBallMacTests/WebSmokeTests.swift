@@ -29,6 +29,7 @@ final class WebSmokeTests: XCTestCase {
         var detailTransparency = 20
         var playerAvatarData = ""
         var resolveAfterPeerLeave = false
+        var recordedResults: [[String: Any]] = []
 
         private func sampleMap(_ id: String, _ name: String, _ updatedAt: String) -> [String: Any] {
             let border = String(repeating: "X ", count: 18)
@@ -47,9 +48,11 @@ final class WebSmokeTests: XCTestCase {
             let result: [String: Any]
             switch action {
             case "bootstrap":
+                let player: [String: Any] = ["id": "test", "name": "player123456",
+                    "avatar": playerAvatarData.isEmpty ? "default" : "custom", "avatarData": playerAvatarData,
+                    "language": playerLanguage, "detailTransparency": detailTransparency]
                 result = [
-                    "profile": ["id": "test", "name": "player123456", "avatar": playerAvatarData.isEmpty ? "default" : "custom",
-                                "avatarData": playerAvatarData, "language": playerLanguage, "detailTransparency": detailTransparency],
+                    "appInfo": ["version": "9.8.7", "build": "42"], "profile": player,
                     "maps": [sampleMap("alpha", "Alpha Map", "2026-01-01T00:00:00Z"),
                              sampleMap("beta", "Beta Map", "2026-02-01T00:00:00Z")], "records": [:],
                     "achievements": [:],
@@ -104,6 +107,7 @@ final class WebSmokeTests: XCTestCase {
                 deletedMapIDs.append(payload["id"] as? String ?? "")
                 result = ["ok": true]
             case "recordResult":
+                recordedResults.append(payload)
                 let cleared = payload["cleared"] as? Bool ?? false
                 let code = payload["mapID"] as? String == "showcase" && payload["difficulty"] as? String == "easy" && cleared
                     ? ["showcase-easy-clear"] : []
@@ -149,6 +153,15 @@ final class WebSmokeTests: XCTestCase {
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) { complete.fulfill() }
     }
 
+    func configureAppResources(_ config: WKWebViewConfiguration) {
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+        config.setURLSchemeHandler(AppResourceHandler(root: root.appendingPathComponent("Web")), forURLScheme: AppResourceHandler.scheme)
+    }
+
+    func loadApp(_ webView: WKWebView) {
+        webView.load(URLRequest(url: AppResourceHandler.home))
+    }
+
     func evaluate(_ webView: WKWebView, _ script: String) async throws -> Any? {
         return try await withCheckedThrowingContinuation { continuation in
             webView.evaluateJavaScript(script) { result, error in
@@ -172,6 +185,7 @@ final class WebSmokeTests: XCTestCase {
     func testOfflineMapsEditorAndGameBoot() async throws {
         _ = NSApplication.shared
         let config = WKWebViewConfiguration()
+        configureAppResources(config)
         let bridge = MockBridge()
         config.userContentController.add(bridge, name: "inkball")
         let webView = WKWebView(frame: NSRect(x: 0, y: 0, width: 1100, height: 780), configuration: config)
@@ -179,9 +193,7 @@ final class WebSmokeTests: XCTestCase {
         let loaded = expectation(description: "Offline page loads")
         let nav = Navigation(loaded)
         webView.navigationDelegate = nav
-        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-        let web = root.appendingPathComponent("Web", isDirectory: true)
-        webView.loadFileURL(web.appendingPathComponent("index.html"), allowingReadAccessTo: web)
+        loadApp(webView)
         await fulfillment(of: [loaded], timeout: 10)
         try await awaitTrue(webView, "document.title==='绘轨' && document.querySelector('.brand strong').textContent==='绘轨'")
         let officialCount = try await evaluate(webView, "INKBALL_OFFICIAL.maps.length===10 && document.querySelector('[data-carousel-total]').textContent==='/ 10' && INKBALL_OFFICIAL.maps.slice(5).every(map=>['easy','hard','master'].every((d,i)=>map.difficulties[d].achievements.length===i+1))") as? Bool

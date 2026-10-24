@@ -9,8 +9,8 @@
   <key>CFBundleExecutable</key><string>Spherail</string>
   <key>CFBundleIconFile</key><string>Spherail.icns</string>
   <key>CFBundlePackageType</key><string>APPL</string>
-  <key>CFBundleShortVersionString</key><string>0.1.1</string>
-  <key>CFBundleVersion</key><string>2</string>
+  <key>CFBundleShortVersionString</key><string>0.1.4</string>
+  <key>CFBundleVersion</key><string>5</string>
   <key>LSMinimumSystemVersion</key><string>13.0</string>
   <key>NSHighResolutionCapable</key><true/>
   <key>NSBluetoothAlwaysUsageDescription</key><string>Spherail uses Bluetooth to connect two nearby Mac computers for a match.</string>

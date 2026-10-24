@@ -22,7 +22,9 @@ final class InkBallAppDelegate: NSObject, NSApplicationDelegate, WKNavigationDel
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApplication.shared.mainMenu = InkBallMenus.mainMenu()
 
+        guard let webFolder = Bundle.main.resourceURL?.appendingPathComponent("Web", isDirectory: true) else { return }
         let config = WKWebViewConfiguration()
+        config.setURLSchemeHandler(AppResourceHandler(root: webFolder), forURLScheme: AppResourceHandler.scheme)
         let content = WKUserContentController()
         config.userContentController = content
         config.defaultWebpagePreferences.allowsContentJavaScript = true
@@ -54,9 +56,7 @@ final class InkBallAppDelegate: NSObject, NSApplicationDelegate, WKNavigationDel
         window.makeKeyAndOrderFront(nil)
         NSApplication.shared.activate(ignoringOtherApps: true)
 
-        guard let webFolder = Bundle.main.resourceURL?.appendingPathComponent("Web", isDirectory: true) else { return }
-        let page = webFolder.appendingPathComponent("index.html")
-        webView.loadFileURL(page, allowingReadAccessTo: webFolder)
+        webView.load(URLRequest(url: AppResourceHandler.home))
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { true }
@@ -163,7 +163,9 @@ final class AppBridge: NSObject, WKScriptMessageHandler {
         switch action {
         case "bootstrap":
             bluetooth.startDiscovery()
-            return ["profile": try store.profile(), "maps": try store.maps(),
+            return ["appInfo": ["version": Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "Development",
+                                "build": Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""],
+                    "profile": try store.profile(), "maps": try store.maps(),
                     "records": try store.records(), "achievements": try store.achievements(),
                     "match": bluetooth.state()]
         case "profile": return try store.profile()

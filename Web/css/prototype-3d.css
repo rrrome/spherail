@@ -1,0 +1,638 @@
+.site-main {
+  padding: 0;
+}
+
+body:has(.prototype3d) .site-header {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+}
+
+body:has(.prototype3d.is-background-mode) .site-header,
+body:has(.prototype3d.is-embedded-play-mode) .site-header,
+body:has(.prototype3d.is-running) .site-header {
+  display: none !important;
+}
+
+.prototype3d {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(126, 222, 185, 0.16), transparent 30%),
+    linear-gradient(140deg, #10272c 0%, #172d2f 48%, #231f2f 100%);
+}
+
+.prototype3d::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 1;
+  height: 170px;
+  pointer-events: none;
+  background:
+    url("../img/ui/console-texture.svg"),
+    linear-gradient(
+      to bottom,
+      rgba(32, 80, 78, 0.9) 0%,
+      rgba(28, 69, 69, 0.48) 46%,
+      rgba(28, 58, 62, 0) 100%
+    );
+  opacity: 0.72;
+}
+
+.prototype3d.is-background-mode::before {
+  display: none;
+}
+
+html:has(.prototype3d.is-background-mode),
+body:has(.prototype3d.is-background-mode),
+.prototype3d.is-background-mode {
+  background: transparent;
+}
+
+.prototype3d__stage {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 620px;
+  overflow: hidden;
+}
+
+.prototype3d.is-background-mode .prototype3d__hud,
+.prototype3d.is-background-mode .prototype3d__briefing,
+.prototype3d.is-background-mode .prototype3d__dashboard,
+.prototype3d.is-background-mode .prototype3d__legend,
+.prototype3d.is-background-mode .prototype3d__result {
+  display: none;
+}
+
+.prototype3d.is-embedded-play-mode .prototype3d__hud,
+.prototype3d.is-embedded-play-mode .prototype3d__briefing,
+.prototype3d.is-embedded-play-mode .prototype3d__actions {
+  display: none;
+}
+
+.prototype3d.is-running .prototype3d__legend {
+  display: none;
+}
+
+.prototype3d__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  cursor: grab;
+  touch-action: none;
+}
+
+.prototype3d__canvas:active {
+  cursor: grabbing;
+}
+
+.prototype3d__hud {
+  position: absolute;
+  top: 126px;
+  left: 24px;
+  right: 24px;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  pointer-events: none;
+}
+
+.prototype3d__picker {
+  display: flex;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.prototype3d__picker label {
+  display: grid;
+  gap: 4px;
+  color: #bcd2c6;
+  font-size: 0.64rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.prototype3d__picker select,
+.prototype3d__picker button {
+  min-width: 150px;
+  border: 1px solid rgba(232, 255, 219, 0.3);
+  border-radius: 5px;
+  padding: 8px 28px 8px 9px;
+  background: rgba(13, 32, 35, 0.82);
+  color: #f7ffe8;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+.prototype3d__picker button { align-self: end; min-width: 58px; cursor: pointer; }
+
+.prototype3d.is-play-mode .prototype3d__picker {
+  display: none;
+}
+
+.prototype3d__eyebrow {
+  margin: 0 0 6px;
+  color: #9edfc6;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.prototype3d h1 {
+  margin: 0;
+  color: #f7ffe8;
+  font-size: clamp(2rem, 6vw, 4.5rem);
+  line-height: 0.92;
+  text-shadow: 0 5px 18px rgba(0, 0, 0, 0.4);
+}
+
+.prototype3d__briefing {
+  position: absolute;
+  left: 50%;
+  bottom: 12.5vh;
+  z-index: 2;
+  width: min(1220px, calc(100% - 48px));
+  color: #eff8e9;
+  pointer-events: auto;
+  transform: translateX(-50%);
+  transition: opacity 420ms ease, transform 520ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.prototype3d.is-running .prototype3d__briefing {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 24px);
+}
+
+.prototype3d__title {
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.prototype3d__title h1 {
+  font-size: clamp(2rem, 4.2vw, 3.5rem);
+}
+
+.prototype3d__title p:last-child {
+  margin: 6px 0 0;
+  color: #bcd2c6;
+  font-weight: 800;
+}
+
+.prototype3d__info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.prototype3d__panel {
+  min-height: 138px;
+  border: 1px solid rgba(184, 220, 198, 0.36);
+  border-radius: 7px;
+  padding: 16px 18px;
+  background: rgba(18, 52, 55, 0.7);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.08), 0 7px 20px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(6px);
+}
+
+.prototype3d__panel h2 {
+  margin: 0 0 12px;
+  color: #f1e3c6;
+  font-size: 0.94rem;
+}
+
+.prototype3d__table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #cbd9cf;
+  font-size: 0.76rem;
+}
+
+.prototype3d__table th,
+.prototype3d__table td {
+  padding: 5px 4px;
+  border-bottom: 1px solid rgba(188, 210, 198, 0.22);
+  text-align: left;
+}
+
+.prototype3d__records {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.prototype3d__records div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.prototype3d__records dt,
+.prototype3d__achievements {
+  color: #bcd2c6;
+}
+
+.prototype3d__records dd {
+  margin: 0;
+  color: #f1e3c6;
+  font-weight: 900;
+}
+
+.prototype3d__achievement {
+  display: grid;
+  gap: 2px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(188, 210, 198, 0.18);
+}
+
+.prototype3d__achievement strong {
+  color: #f1e3c6;
+}
+
+.prototype3d__achievement small {
+  color: #b4c6ba;
+}
+
+.prototype3d__start-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+.prototype3d__start {
+  min-width: 210px;
+  border: 1px solid #ffcca0;
+  border-radius: 8px;
+  padding: 13px 24px;
+  background: linear-gradient(#f6b580, #e99363);
+  color: #293832;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: .05em;
+  cursor: pointer;
+  box-shadow: inset 0 1px #ffe4bb, 0 5px 0 #975b40, 0 7px 0 #102b2e;
+}
+
+.prototype3d__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  max-width: 320px;
+  pointer-events: auto;
+}
+
+.prototype3d.is-play-mode:not(.is-running) .prototype3d__actions,
+.prototype3d.is-play-mode:not(.is-running) .prototype3d__dashboard,
+.prototype3d.is-play-mode:not(.is-running) .prototype3d__legend {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.prototype3d__actions button {
+  min-width: 84px;
+  border: 1px solid rgba(232, 255, 219, 0.3);
+  border-radius: 6px;
+  padding: 9px 12px;
+  background: rgba(13, 32, 35, 0.72);
+  color: #f7ffe8;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(8px);
+}
+
+.prototype3d__actions button:hover,
+.prototype3d__actions button:focus-visible {
+  background: rgba(63, 113, 100, 0.82);
+}
+
+.prototype3d__dashboard {
+  position: absolute;
+  left: 24px;
+  bottom: 22px;
+  z-index: 2;
+  max-width: min(440px, calc(100% - 48px));
+  border: 1px solid rgba(232, 255, 219, 0.22);
+  border-radius: 6px;
+  padding: 10px 12px 11px;
+  background: rgba(13, 32, 35, 0.68);
+  color: #dcebd2;
+  backdrop-filter: blur(8px);
+}
+
+.prototype3d.is-running .prototype3d__dashboard {
+  top: 126px;
+  bottom: auto;
+}
+
+.prototype3d__stats { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 0.72rem; font-weight: 750; }
+.prototype3d__stats strong { color: #fff7d8; font-size: 0.86rem; }
+.prototype3d__queue { display: flex; gap: 5px; min-height: 25px; margin-top: 8px; }
+.prototype3d__queue-ball {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  border-radius: 50%;
+  background: var(--ball-color);
+  box-shadow: inset -4px -5px 7px rgba(0, 0, 0, 0.32), inset 3px 3px 5px rgba(255, 255, 255, 0.48), 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.prototype3d__result {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(5, 16, 18, 0.72);
+  backdrop-filter: blur(7px);
+}
+.prototype3d__result[hidden] { display: none; }
+.prototype3d__result-panel {
+  width: min(430px, 100%);
+  border: 1px solid rgba(232, 255, 219, 0.28);
+  border-radius: 7px;
+  padding: 26px;
+  background: #193235;
+  color: #eff8e9;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+}
+.prototype3d__result-panel > p { margin: 0 0 5px; color: #9edfc6; font-size: 0.72rem; font-weight: 900; text-transform: uppercase; }
+.prototype3d__result h2 { margin: 0 0 20px; font-size: 2rem; }
+.prototype3d__result dl { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 0; }
+.prototype3d__result dl div { border-top: 1px solid #416064; padding-top: 9px; }
+.prototype3d__result dt { color: #a9bfba; font-size: 0.7rem; font-weight: 750; }
+.prototype3d__result dd { margin: 3px 0 0; font-size: 1.35rem; font-weight: 900; }
+.prototype3d__result-actions { display: flex; gap: 8px; margin-top: 22px; }
+.prototype3d__result-actions button {
+  flex: 1;
+  border: 1px solid #6d8c85;
+  border-radius: 5px;
+  padding: 10px;
+  background: #294b4e;
+  color: #f4f8e9;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 850;
+}
+
+/* Keep game controls inside the stage, including embedded fullscreen games. */
+.prototype3d.is-running .prototype3d__stage {
+  height: 100dvh;
+  min-height: 0;
+}
+
+.prototype3d__tools {
+  position: absolute;
+  z-index: 4;
+}
+
+.prototype3d__tools[hidden], .prototype3d__camera-lock[hidden] {
+  display: none;
+}
+
+.prototype3d__camera-lock {
+  position: absolute;
+  right: max(1rem, env(safe-area-inset-right));
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid #709087;
+  border-bottom-color: #163638;
+  border-radius: 12px;
+  background: var(--ui-control);
+  color: var(--text);
+  box-shadow: var(--ui-shadow);
+  cursor: pointer;
+}
+
+.prototype3d__camera-lock svg { width: 24px; height: 24px; }
+.prototype3d__camera-lock .prototype3d__lock-shackle--closed,
+.prototype3d__camera-lock[aria-pressed="true"] .prototype3d__lock-shackle--open {
+  display: none;
+}
+.prototype3d__camera-lock[aria-pressed="true"] .prototype3d__lock-shackle--closed {
+  display: inline;
+}
+.prototype3d__camera-lock[aria-pressed="true"] {
+  border-color: #d8c78f;
+  background: #426866;
+  color: #fff2d4;
+  box-shadow: inset 0 2px 5px #102c2f60, 0 0 0 2px #d8c78f40, 0 2px 0 #102b2e;
+}
+.prototype3d__camera-lock:hover { border-color: #b1c9ae; }
+.prototype3d__canvas.is-erasing { cursor: crosshair; }
+
+.prototype3d__pause-fab {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 4;
+  min-height: 44px;
+  border: 1px solid rgba(232, 255, 219, 0.3);
+  border-radius: 8px;
+  padding: 0.7rem 1.1rem;
+  background: rgba(36, 79, 79, 0.88);
+  color: #fff2d4;
+  font: inherit;
+  font-weight: 900;
+  box-shadow: 0 5px 0 #102b2e, inset 0 1px rgba(255, 255, 255, 0.14);
+  cursor: pointer;
+}
+
+.prototype3d__pause-fab::before {
+  content: "Ⅱ";
+  margin-right: 0.55rem;
+  font-weight: 900;
+}
+
+.prototype3d__pause-fab[hidden] {
+  display: none;
+}
+
+.prototype3d__pause-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  border: 0;
+  padding: 12px;
+  background: rgba(12, 43, 45, 0.72);
+  color: #fff2d4;
+  backdrop-filter: blur(6px);
+}
+
+.prototype3d__pause-overlay[hidden],
+.prototype3d__pause-overlay:not([open]) {
+  display: none;
+}
+
+.prototype3d__pause-overlay::backdrop {
+  background: transparent;
+}
+
+.prototype3d__pause-dialog {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(560px, calc(100vw - 32px));
+  border: 2px solid #9eaf92;
+  border-radius: 22px;
+  padding: 1.8rem 1.5rem;
+  background: #285054;
+  box-shadow: inset 0 0 0 6px #79968022, 0 7px 0 #102b2e, 0 24px 60px #071b1dcc;
+  transform: translate(-50%, -50%);
+}
+
+.prototype3d__pause-dialog h2 {
+  margin: 0;
+  padding: 0 0 1.5rem;
+  color: #f1e3c6;
+  font-size: 2rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+.prototype3d__pause-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.prototype3d__pause-action {
+  display: flex;
+  height: 132px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.8rem;
+  border: 1px solid #87a18e;
+  border-radius: 14px;
+  padding: 0.7rem;
+  background: #315c5b;
+  color: #fff2d4;
+  font: inherit;
+  font-weight: 900;
+  text-decoration: none;
+  box-shadow: 0 4px 0 #102b2e;
+  cursor: pointer;
+}
+
+.prototype3d__pause-action--resume {
+  border-color: #ffcca0;
+  background: #eaa776;
+  color: #2e392e;
+  box-shadow: 0 4px 0 #975b40;
+}
+
+.prototype3d__pause-action svg,
+.prototype3d__pause-action .game-back-icon {
+  width: 38px;
+  height: 38px;
+  padding: 8px;
+  border-radius: 50%;
+  background-color: #102c2f2b;
+}
+
+.prototype3d__legend {
+  position: absolute;
+  right: 24px;
+  bottom: 22px;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 6px 14px;
+  margin: 0;
+  border: 1px solid rgba(232, 255, 219, 0.22);
+  border-radius: 6px;
+  padding: 9px 11px;
+  background: rgba(13, 32, 35, 0.7);
+  color: #e8f4e7;
+  backdrop-filter: blur(8px);
+}
+
+.prototype3d__legend div { display: flex; align-items: center; gap: 6px; }
+.prototype3d__legend dt {
+  display: grid;
+  place-items: center;
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  background: #dce2ec;
+  color: #172326;
+  font-size: 0.67rem;
+  font-weight: 950;
+}
+.prototype3d__legend dd { margin: 0; font-size: 0.7rem; font-weight: 800; }
+
+@media (max-width: 720px) {
+  .prototype3d__stage {
+    height: 100svh;
+    min-height: 560px;
+  }
+
+  .prototype3d__hud {
+    left: 14px;
+    right: 14px;
+    top: 112px;
+    flex-direction: column;
+  }
+
+  .prototype3d__actions {
+    justify-content: flex-start;
+  }
+
+  .prototype3d__actions button {
+    min-width: 72px;
+    padding: 8px 10px;
+  }
+
+  .prototype3d__dashboard {
+    left: 14px;
+    bottom: 14px;
+    max-width: calc(100% - 28px);
+  }
+
+  .prototype3d.is-running .prototype3d__dashboard {
+    top: 112px;
+    bottom: auto;
+  }
+
+  .prototype3d__picker { width: 100%; }
+  .prototype3d__picker label { flex: 1; }
+  .prototype3d__picker select { width: 100%; min-width: 0; }
+
+  .prototype3d__legend { right: 14px; bottom: 68px; grid-template-columns: auto; }
+
+  .prototype3d__briefing {
+    bottom: 92px;
+    width: calc(100% - 28px);
+  }
+
+  .prototype3d__info-grid {
+    grid-template-columns: 1fr;
+    max-height: 42vh;
+    overflow: auto;
+  }
+}

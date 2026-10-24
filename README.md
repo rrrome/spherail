@@ -8,6 +8,16 @@
 
 ![绘轨首页：官方地图选择界面](image/HomePage.png)
 
+玩家资料面板左下角显示当前 App 版本号，直接读取应用包中的版本信息。
+
+## 3D 地图
+
+官方地图和自制地图的难度页右上角提供 **3D / 2D** 切换。3D 模式沿用参考项目的模型、材质、灯光、镜头参数和交互：预览从平面过渡到立体，切换难度时保留不变的方块并过渡更新其他模型；开始游戏后使用同一场景游玩。
+
+支持透视画线、右键或橡皮擦除、旋转与缩放镜头、锁定视角、暂停、重开和结算。成绩及成就保存在本机，结算页重开会继续使用 3D。与参考项目一致，3D 模式暂不支持对战；切回 2D 后可使用原有局域网和蓝牙对战。
+
+Three.js 固定为参考实现使用的 `0.164.1`，运行时贴图和渲染代码全部打包在 App 内，游玩无需 CDN 或互联网。第三方许可和素材来源见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+
 界面沿用网页版的深绿街机配色。官图首页保留循环滑动地图卡、地图预览与动态背景；点击预览会将地图展开为居中的难度选择页，返回时缩回卡片。地图编辑器采用左侧素材栏、中央棋盘、右侧设置与发球顺序的布局，并提供拖放、橡皮擦和撤销重做。复合方块在构建时生成为本地 PNG，素材栏与棋盘共用。页面转场会遵守 macOS 的“减少动态效果”设置。
 
 新建地图以只有外墙的空白棋盘开始，发球点由用户放置。选中素材后，鼠标移到棋盘会显示半透明预览；占用位置不允许重叠，洞按 2×2 格处理，右键点击洞的任意一格可删除整洞。“？”打开与网页版对应的砖块图例，颜色说明可逐项展开。各难度分别保留撤销与重做历史。
@@ -51,7 +61,7 @@
 
 ## 构建与测试
 
-构建需要 macOS、Xcode Command Line Tools（Swift）、Python 3.10+（建议 3.12）和 `rsvg-convert`（通过 `brew install librsvg` 安装）。验证地图回放还需要 Node.js。
+构建需要 macOS、Xcode Command Line Tools（Swift）、Python 3.10+（建议 3.12）、Node.js 18+（含 npm），以及 `rsvg-convert`（通过 `brew install librsvg` 安装）。
 
 首次在本目录初始化构建环境：
 
@@ -59,10 +69,11 @@
 bash scripts/setup.sh
 ```
 
-脚本会创建当前项目的 `.venv`，并安装 `requirements-build.txt` 中固定版本的 Pillow。可通过 `PYTHON=python3.12 bash scripts/setup.sh` 指定 Python。随后执行：
+脚本会创建当前项目的 `.venv`，安装 `requirements-build.txt` 中固定版本的 Pillow，并通过 `npm ci` 安装锁定的 JavaScript 构建依赖。`npm run build:3d` 将 Three.js 和 3D 渲染器编译为适用于本地 WKWebView 的脚本。可通过 `PYTHON=python3.12 bash scripts/setup.sh` 指定 Python。随后执行：
 
 ```bash
 .venv/bin/python -m unittest discover -s Tests/ResourceGeneration
+npm run test:3d
 node scripts/verify_expansion.mjs
 swift test
 bash scripts/build.sh

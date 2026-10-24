@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spherail 3D</title><link rel="stylesheet" href="desktop.css"><link rel="stylesheet" href="desktop-web.css"><link rel="stylesheet" href="css/prototype-3d.css">
+<style>html,body{margin:0;background:transparent!important;overflow:hidden}.prototype3d__stage{min-height:0;height:100dvh}:root{--ui-control:#284f50;--text:#e6f5e8;--ui-shadow:0 5px 0 #102b2e}</style>
+</head><body>
+  <section class="prototype3d is-background-mode" data-prototype-3d>
+    <div class="prototype3d__stage">
+      <canvas class="prototype3d__canvas" data-prototype-canvas aria-label="2.5D Inkball prototype"></canvas>
+      <div class="prototype3d__hud">
+        <form class="prototype3d__picker" data-level-picker>
+          <label>Official map<select data-map-select></select></label>
+          <label>Difficulty<select data-difficulty-select></select></label>
+          <button type="submit">Load</button>
+        </form>
+        <div class="prototype3d__actions">
+          <button type="button" data-camera-mode="orbit">Orbit</button>
+          <button type="button" data-camera-mode="follow">Follow</button>
+          <button type="button" data-reset-demo>Reset</button>
+        </div>
+      </div>
+      <section class="prototype3d__briefing" data-prototype-briefing>
+        <div class="prototype3d__title">
+          <p class="arcade-eyebrow">3D MAP</p>
+          <h1 data-prototype-map-title>Inkball</h1>
+          <p data-prototype-map-subtitle></p>
+        </div>
+        <div class="prototype3d__info-grid">
+          <section class="prototype3d__panel">
+            <h2>Leaderboard</h2>
+            <table class="prototype3d__table">
+              <thead>
+                <tr><th>#</th><th>Player</th><th>Accuracy</th><th>Score</th></tr>
+              </thead>
+              <tbody data-prototype-leaderboard>
+                <tr><td colspan="4">Loading...</td></tr>
+              </tbody>
+            </table>
+          </section>
+          <section class="prototype3d__panel">
+            <h2>Best record</h2>
+            <dl class="prototype3d__records" data-prototype-records>
+              <div><dt>Score</dt><dd data-record-score>-</dd></div>
+              <div><dt>Time</dt><dd data-record-time>-</dd></div>
+              <div><dt>Accuracy</dt><dd data-record-accuracy>-</dd></div>
+              <div><dt>Clears</dt><dd data-record-clears>-</dd></div>
+            </dl>
+          </section>
+          <section class="prototype3d__panel">
+            <h2>Level achievements</h2>
+            <div class="prototype3d__achievements" data-prototype-achievements>Loading...</div>
+          </section>
+        </div>
+        <div class="prototype3d__start-row">
+          <button type="button" class="prototype3d__start" data-prototype-start>Start</button>
+        </div>
+      </section>
+      <section class="prototype3d__dashboard" aria-label="Game status">
+        <div class="prototype3d__stats">
+          <span>Score <strong data-prototype-score>0</strong></span>
+          <span>Time <strong data-prototype-time>0</strong></span>
+          <span>Next <strong data-prototype-next>—</strong></span>
+        </div>
+        <div class="prototype3d__queue" data-prototype-queue aria-label="Balls waiting to enter"></div>
+      </section>
+      <div class="community-edit-tools prototype3d__tools" role="toolbar" aria-label="Drawing tools" data-i18n-aria-label="game.tools" data-prototype-tools hidden>
+        <button type="button" data-prototype-tool="draw" aria-pressed="true" aria-label="Draw lines" data-i18n-aria-label="game.tool.draw">
+          <img src="img/ui/mouse-pointer.svg" alt="" aria-hidden="true">
+        </button>
+        <button type="button" data-prototype-tool="erase" aria-pressed="false" aria-label="Erase lines" data-i18n-aria-label="game.tool.erase">
+          <img src="img/ui/eraser.svg" alt="" aria-hidden="true">
+        </button>
+      </div>
+      <button type="button" class="prototype3d__camera-lock" data-prototype-camera-lock aria-pressed="false" aria-label="Lock camera" title="锁定视角" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <rect x="5" y="10" width="14" height="11" rx="2"></rect>
+          <path class="prototype3d__lock-shackle--closed" d="M8 10V6a4 4 0 0 1 8 0v4"></path>
+          <path class="prototype3d__lock-shackle--open" d="M8 10V6a4 4 0 0 1 8 0"></path>
+          <path d="M12 14v3"></path>
+        </svg>
+      </button>
+      <button type="button" class="prototype3d__pause-fab" data-prototype-pause-open hidden>暂停</button>
+      <dl class="prototype3d__legend" aria-label="Special tile legend">
+        <div><dt>Y</dt><dd>Key wall</dd></div>
+        <div><dt>V</dt><dd>Wall switch</dd></div>
+        <div><dt>G</dt><dd>Hole switch</dd></div>
+        <div><dt>T</dt><dd>Timed wall</dd></div>
+      </dl>
+      <dialog class="prototype3d__pause-overlay" data-prototype-pause-overlay hidden aria-labelledby="prototype3d-pause-title">
+        <div class="prototype3d__pause-dialog">
+          <h2 id="prototype3d-pause-title">暂停</h2>
+          <div class="prototype3d__pause-actions">
+            <a class="prototype3d__pause-action" data-prototype-pause-home href="/" target="_top">
+              <img src="img/ui/back.svg" alt="" aria-hidden="true">
+              <span>返回地图</span>
+            </a>
+            <button type="button" class="prototype3d__pause-action" data-prototype-pause-restart>
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                      d="M4 12a8 8 0 0 1 13.66-5.66L20 8M20 4v4h-4M20 12a8 8 0 0 1-13.66 5.66L4 16M4 20v-4h4"/>
+              </svg>
+              <span>重开</span>
+            </button>
+            <button type="button" class="prototype3d__pause-action prototype3d__pause-action--resume" data-prototype-pause-resume>
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path fill="currentColor" d="M8 5.5v13l11-6.5-11-6.5z"/>
+              </svg>
+              <span>继续</span>
+            </button>
+          </div>
+        </div>
+      </dialog>
+      <section class="prototype3d__result" data-prototype-result hidden aria-labelledby="prototype-result-title">
+        <div class="prototype3d__result-panel">
+          <p data-prototype-result-map></p>
+          <h2 id="prototype-result-title" data-prototype-result-title>Level complete</h2>
+          <dl>
+            <div><dt>Score</dt><dd data-result-score>0</dd></div>
+            <div><dt>Captured</dt><dd data-result-captured>0</dd></div>
+            <div><dt>Wrong</dt><dd data-result-wrong>0</dd></div>
+            <div><dt>Accuracy</dt><dd data-result-accuracy>0%</dd></div>
+          </dl>
+          <div class="prototype3d__result-actions">
+            <button type="button" data-result-save-retry hidden data-i18n="game.retrySave">Retry saving</button>
+            <button type="button" data-result-restart>Play again</button>
+            <button type="button" data-result-close>View board</button>
+          </div>
+          <p data-prototype-save-error hidden role="alert" data-i18n="game.saveFailed">Could not save the result. Click to retry.</p>
+        </div>
+      </section>
+    </div>
+  </section>
+
+<script id="inkball-3d-map" type="application/json">{}</script>
+<script src="official-data.js"></script>
+<script src="i18n-data.js"></script>
+<script src="desktop-i18n.js"></script>
+<script src="js/ball-collision.js"></script>
+<script src="js/inkball/constants.js"></script>
+<script src="js/inkball/tiles.js"></script>
+<script src="js/inkball/line.js"></script>
+<script src="js/inkball/hole.js"></script>
+<script src="js/inkball/ball.js"></script>
+<script src="js/inkball/moving_tile.js"></script>
+<script src="js/inkball/level.js"></script>
+<script src="js/map-render-preview.js"></script>
+<script src="js/frame-clock.js"></script>
+<script src="js/desktop-3d-frame.js"></script>
+</body></html>

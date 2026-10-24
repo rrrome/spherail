@@ -6,8 +6,7 @@ extension WebSmokeTests {
     func testCompleteMapPreviewsAndDifficultySwitching() async throws {
         _ = NSApplication.shared
         let config = WKWebViewConfiguration()
-        // Permit pixel comparisons of local sprites in this test WebView.
-        config.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
+        configureAppResources(config)
         // Exercise priority independently of JSON key order and absent difficulties.
         config.userContentController.addUserScript(WKUserScript(source: """
             Object.defineProperty(window, 'INKBALL_OFFICIAL', {
@@ -30,9 +29,7 @@ extension WebSmokeTests {
         let loaded = expectation(description: "Preview test page loads")
         let nav = Navigation(loaded)
         webView.navigationDelegate = nav
-        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-        let web = root.appendingPathComponent("Web", isDirectory: true)
-        webView.loadFileURL(web.appendingPathComponent("index.html"), allowingReadAccessTo: web)
+        loadApp(webView)
         await fulfillment(of: [loaded], timeout: 10)
         try await awaitTrue(webView, "document.querySelectorAll('#official-map-list .is-preview-ready').length===30")
         let priority = try await evaluate(webView, """
