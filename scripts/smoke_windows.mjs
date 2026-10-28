@@ -88,7 +88,22 @@ try {
   await frame.evaluate(() => window.Inkball3D.resume()); assert.equal(await frame.evaluate(() => window.Inkball3D.paused), false);
   await frame.evaluate(() => { window.Inkball3D.setCameraLocked(false); window.Inkball3D.setTool('erase'); });
   assert.equal(await frame.evaluate(() => window.Inkball3D.drawTool), 'erase');
-  await page.screenshot({ path: path.join(output, '03-game-3d.png') });
+  if (process.env.CI) {
+    // Chromium's hidden-window compositor can stall captureScreenshot with
+    // SwiftShader. Read the actual WebGL frame instead, retaining pixel checks.
+    const snapshot = await frame.evaluate(() => {
+      const renderer = window.Inkball3D.renderer;
+      window.Inkball3D.renderFrame();
+      const canvas = renderer.domElement, gl = renderer.getContext();
+      const pixels = new Uint8Array(canvas.width * canvas.height * 4);
+      gl.readPixels(0, 0, canvas.width, canvas.height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+      const colors = new Set();
+      for (let index = 0; index < pixels.length; index += 4 * 521) colors.add(`${pixels[index]},${pixels[index + 1]},${pixels[index + 2]}`);
+      return { image: canvas.toDataURL('image/png'), colors: colors.size };
+    });
+    assert.ok(snapshot.colors > 8, 'Software WebGL must render a nonblank, multicolour game frame');
+    fs.writeFileSync(path.join(output, '03-game-3d.png'), Buffer.from(snapshot.image.split(',')[1], 'base64'));
+  } else await page.screenshot({ path: path.join(output, '03-game-3d.png') });
   await frame.evaluate(() => window.InkballScene.navigate('desktop-return'));
   await wait("!document.querySelector('#detail-view').classList.contains('is-3d-playing')");
   console.log('PASS: local 3D textures, WebGL, start, pause, camera, erase and return');

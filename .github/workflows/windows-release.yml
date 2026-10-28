@@ -6,6 +6,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: windows-release-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   windows:
     if: github.repository == 'rrrome/spherail_private'
@@ -43,14 +46,17 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python scripts/verify_gameplay_sprites.py
       - name: Test the Windows desktop application
+        timeout-minutes: 5
         run: npm.cmd run test:windows
       - name: Build Windows installers
         run: npm.cmd run build:windows
       - name: Test the packaged Windows application
+        timeout-minutes: 5
         run: |
           $env:SPHERAIL_EXE = (Resolve-Path dist/win-unpacked/Spherail.exe).Path
           npm.cmd run test:windows
       - name: Test per-user install, installed app and uninstall
+        timeout-minutes: 5
         run: ./scripts/test_windows_installer.ps1
       - name: Preserve test screenshots
         if: always()
