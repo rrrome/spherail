@@ -95,10 +95,15 @@ try {
   await wait('window.Inkball3D?.texturesLoaded()', frame);
   assert.equal(await frame.evaluate(() => window.Inkball3D.renderer.getContext().isContextLost()), false);
   await click('#detail-start'); await wait('window.Inkball3D.started', frame);
-  await frame.evaluate(() => window.Inkball3D.pause()); assert.equal(await frame.evaluate(() => window.Inkball3D.paused), true);
-  await frame.evaluate(() => window.Inkball3D.resume()); assert.equal(await frame.evaluate(() => window.Inkball3D.paused), false);
-  await frame.evaluate(() => { window.Inkball3D.setCameraLocked(false); window.Inkball3D.setTool('erase'); });
-  assert.equal(await frame.evaluate(() => window.Inkball3D.drawTool), 'erase');
+  const controls = await frame.evaluate(() => {
+    const game = window.Inkball3D;
+    game.pause(); const paused = game.paused;
+    game.resume(); const resumed = !game.paused;
+    // Freeze the short real-time level while a slow software GPU is captured.
+    game.pause(); game.setCameraLocked(false); game.setTool('erase');
+    return { paused, resumed, tool: game.drawTool, cameraLocked: game.cameraLocked };
+  });
+  assert.deepEqual(controls, { paused: true, resumed: true, tool: 'erase', cameraLocked: false });
   if (process.env.CI) {
     // Chromium's hidden-window compositor can stall captureScreenshot with
     // SwiftShader. Read the actual WebGL frame instead, retaining pixel checks.
@@ -110,10 +115,13 @@ try {
       gl.readPixels(0, 0, canvas.width, canvas.height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
       const colors = new Set();
       for (let index = 0; index < pixels.length; index += 4 * 521) colors.add(`${pixels[index]},${pixels[index + 1]},${pixels[index + 2]}`);
-      return { image: canvas.toDataURL('image/png'), colors: colors.size };
+      return { image: canvas.toDataURL('image/png'), colors: colors.size, width: canvas.width, height: canvas.height,
+        contextLost: gl.isContextLost(), glError: gl.getError(), started: window.Inkball3D.started, paused: window.Inkball3D.paused };
     });
-    assert.ok(snapshot.colors > 8, 'Software WebGL must render a nonblank, multicolour game frame');
     fs.writeFileSync(path.join(output, '03-game-3d.png'), Buffer.from(snapshot.image.split(',')[1], 'base64'));
+    const { image: _image, ...diagnostics } = snapshot;
+    console.log('3D frame diagnostics:', JSON.stringify(diagnostics));
+    assert.ok(snapshot.colors > 8, 'Software WebGL must render a nonblank, multicolour game frame');
   } else await page.screenshot({ path: path.join(output, '03-game-3d.png') });
   console.log('PASS: nonblank 3D render capture');
   // Returning removes the iframe. Evaluate in the surviving main frame so a
