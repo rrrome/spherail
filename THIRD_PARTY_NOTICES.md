@@ -2,6 +2,16 @@
 
 Spherail's GPL-3.0-only license does not replace the following third-party terms.
 
+- **Electron 45.1.0** hosts the Windows desktop application under the MIT License.
+  Electron/Chromium's full runtime notices are shipped as `LICENSE.electron.txt`
+  and `LICENSES.chromium.html` alongside the Windows executable.
+  Source: <https://github.com/electron/electron/tree/v45.1.0>.
+- **bonjour-service 1.4.4** provides Windows LAN discovery under the MIT License.
+  Its transitive dependency licenses are included in `Windows/DEPENDENCY_LICENSES.txt`.
+  Source: <https://github.com/onlxltd/bonjour-service>.
+- **electron-builder** and **Playwright** are build/test tools and are not
+  dependencies of the installed game.
+
 - **Three.js 0.164.1** is used by the 3D renderer under the MIT License.
   Copyright © 2010–2024 three.js authors. The full license is included at
   [Web/vendor/three/LICENSE](Web/vendor/three/LICENSE).

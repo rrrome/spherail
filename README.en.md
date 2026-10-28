@@ -1,6 +1,8 @@
-# Spherail for Mac / 绘轨
+# Spherail for Mac & Windows / 绘轨
 
 [简体中文](README.md) | **English**
+
+**Windows:** version `0.1.4`, matching macOS. See [Windows setup and build instructions](Windows/README.md). Windows binaries are published to the [private repository Releases](https://github.com/rrrome/spherail_private/releases). The native Swift build and Bluetooth instructions below apply to macOS.
 
 [License: GPL-3.0-only](LICENSE)
 
@@ -73,7 +75,7 @@ Build requirements:
 
 - macOS and Xcode Command Line Tools, including Swift.
 - Python 3.10 or later; Python 3.12 is recommended.
-- Node.js 18 or later, including npm, for the 3D bundle and JavaScript tests.
+- Node.js 24 or later, including npm, for the shared build dependencies and JavaScript tests.
 - `rsvg-convert`, installed with `brew install librsvg`.
 
 Initialize the build environment from the project root:

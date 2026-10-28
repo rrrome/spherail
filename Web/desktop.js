@@ -57,6 +57,7 @@
   let requestID = 0;
   window.InkBallNative = {
     call(action, payload = {}) {
+      if (window.SpherailWindows) return window.SpherailWindows.call(action, payload);
       const id = ++requestID;
       return new Promise((resolve, reject) => {
         pending.set(id, { resolve, reject });
@@ -81,6 +82,7 @@
     },
   };
   const native = window.InkBallNative;
+  window.SpherailWindows?.onEvent(message => native.emit(message));
 
   // The existing canvas engine and opponent renderer use these small global contracts.
   window.Inkball = window.Inkball || {};
@@ -1244,11 +1246,12 @@
     $('#match-pending-text').textContent = match.phase === 'connecting' ? `正在邀请 ${match.peer?.name || '附近玩家'}…` : match.phase === 'countdown' ? '对战即将开始' : '对方已接受邀请';
     const hasWiFi = match.wifiState === 'ready';
     const hasBluetooth = match.bluetoothState === 'ready' || (!('bluetoothState' in match) && !('wifiState' in match));
+    const windows = document.documentElement.dataset.platform === 'windows';
     $('#match-status').textContent = matchErrorMessage || (pending ? '等待对方响应'
-      : !hasWiFi && !hasBluetooth ? '请连接同一 Wi-Fi 或开启蓝牙。' : '正在寻找附近玩家…');
+      : !hasWiFi && !hasBluetooth ? (windows ? '请连接同一局域网，并允许防火墙访问专用网络。' : '请连接同一 Wi-Fi 或开启蓝牙。') : '正在寻找附近玩家…');
     const list = $('#match-peers'); list.replaceChildren();
     if (peers.size === 0) {
-      list.append(textNode('p', '尚未发现附近的绘轨玩家。请确认双方连接同一 Wi-Fi 或开启蓝牙。', 'match-peer-empty'));
+      list.append(textNode('p', windows ? '尚未发现附近的绘轨玩家。请确认双方连接同一局域网，并允许防火墙访问专用网络。' : '尚未发现附近的绘轨玩家。请确认双方连接同一 Wi-Fi 或开启蓝牙。', 'match-peer-empty'));
     }
     for (const peer of peers.values()) {
       const row = document.createElement('div'); row.className = 'match-peer';
@@ -1575,6 +1578,13 @@
 
   async function initialize() {
     const data = await native.call('bootstrap');
+    if (data.appInfo?.platform === 'windows') {
+      document.documentElement.dataset.platform = 'windows';
+      $('#match-bluetooth-settings').hidden = true;
+      const guide = $('.match-setup__guide');
+      guide.querySelector('h2').textContent = '连接同一局域网';
+      guide.querySelector('p').textContent = '两台电脑保持绘轨运行，并连接同一 Wi-Fi 或有线局域网。请允许 Windows 防火墙访问专用网络。';
+    }
     profile = data.profile; customMaps = data.maps; records = data.records;
     const appVersion = data.appInfo?.version || 'Development';
     $('#profile-version').textContent = `v${appVersion}`;
@@ -1966,7 +1976,7 @@
       if (!currentPlay || $('#play-view').hidden) closeCountdown();
       if (currentPlay?.inMatch && game) {
         $('#status').hidden = false;
-        $('#status').textContent = '蓝牙连接中断，正在恢复；本局计时继续。';
+        $('#status').textContent = '对战连接中断，正在恢复；本局计时继续。';
       }
     });
     native.on('opponentFinished', (result) => {

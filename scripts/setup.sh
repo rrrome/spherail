@@ -2,10 +2,10 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 if ! command -v node >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
-  echo 'Install Node.js 18+ (including npm) before setting up the build.' >&2
+  echo 'Install Node.js 24+ (including npm) before setting up the build.' >&2
   exit 1
 fi
-node -e 'if (Number(process.versions.node.split(".")[0]) < 18) { console.error("Node.js 18+ is required"); process.exit(1); }'
+node -e 'if (Number(process.versions.node.split(".")[0]) < 24) { console.error("Node.js 24+ is required"); process.exit(1); }'
 
 # Prefer the tested Python version, then accept any installed Python 3.10+.
 BUILD_PYTHON="${PYTHON:-}"

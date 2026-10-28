@@ -4,6 +4,11 @@
   // The website catalogue covers shared game terms. These entries cover the
   // offline desktop flows, including copy that has no server-side equivalent.
   const desktopEnglish = {
+    '连接同一局域网': 'Connect to the same local network',
+    '请连接同一局域网，并允许防火墙访问专用网络。': 'Connect to the same local network and allow private network access in your firewall.',
+    '尚未发现附近的绘轨玩家。请确认双方连接同一局域网，并允许防火墙访问专用网络。': 'No nearby Spherail players found. Connect both computers to the same local network and allow private network access in your firewall.',
+    '两台电脑保持绘轨运行，并连接同一 Wi-Fi 或有线局域网。请允许 Windows 防火墙访问专用网络。': 'Keep Spherail running on both computers on the same Wi-Fi or wired network. Allow access to private networks in Windows Firewall.',
+    '对战连接中断，正在恢复；本局计时继续。': 'Match connection lost. Reconnecting; the game clock continues.',
     '绘轨': 'SPHERAIL', '绘轨游戏棋盘': 'Spherail game board',
     '绘轨游乐场 · 官方关卡': 'Spherail Arcade · Official Levels',
     '· 确认码：': ' · Confirmation code: ',
@@ -60,7 +65,7 @@
     '选择图片': 'Choose image', '恢复默认头像': 'Use default avatar',
     '拖动图片选择头像区域': 'Drag the image to choose the avatar area',
     '头像裁剪区域': 'Avatar crop area', '缩放': 'Zoom',
-    '头像保存在本机；接受对战邀请后会发送给对方。': 'Your avatar is saved on this Mac and sent to your opponent when you accept a match invitation.',
+    '头像保存在本机；接受对战邀请后会发送给对方。': 'Your avatar is saved on this device and sent to your opponent when you accept a match invitation.',
     '保存资料': 'Save profile', '请选择不超过 12 MB 的图片。': 'Choose an image smaller than 12 MB.',
     '无法读取这张图片。': 'Could not read this image.',
     '图片无法压缩到头像大小，请选择另一张图片。': 'Could not compress this image for an avatar. Choose another image.',
@@ -89,7 +94,7 @@
     '发球顺序中有小球时，至少放置一个发球点。': 'Place at least one spawn point when the serve queue contains balls.',
     '至少放置一个球洞。': 'Place at least one hole.',
     '至少添加一个球和一个球洞。': 'Add at least one ball and one hole.',
-    '已保存在本机。': 'Saved on this Mac.',
+    '已保存在本机。': 'Saved on this device.',
     '导入地图代码': 'Import map code',
     '已复制到剪切板': 'Copied to clipboard', '已复制到剪贴板。': 'Copied to clipboard.',
     '等待附近 Mac 加入': 'Waiting for a nearby Mac', '正在查找': 'Searching',

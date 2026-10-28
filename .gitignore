@@ -6,6 +6,8 @@
 .build/
 .swiftpm/
 build/
+dist/
+test-results/
 
 # Python caches
 .venv/
