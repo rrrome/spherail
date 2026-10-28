@@ -17,6 +17,17 @@ const args = process.env.SPHERAIL_EXE ? flags : [root, ...flags];
 const env = { ...process.env }; delete env.ELECTRON_RUN_AS_NODE;
 const errors = [], failedRequests = [];
 let desktop;
+async function withDeadline(promise, label, milliseconds = 60000) {
+  let timer;
+  try { return await Promise.race([promise, new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(`Timed out: ${label}`)), milliseconds); })]); }
+  finally { clearTimeout(timer); }
+}
+async function closeDesktop() {
+  if (!desktop) return;
+  const instance = desktop; desktop = null;
+  try { await withDeadline(instance.close(), 'closing the test application', 15000); }
+  catch { instance.process().kill(); }
+}
 try {
   desktop = await _electron.launch({ executablePath, args, env, timeout: 60000 });
   const page = await desktop.firstWindow();
@@ -104,7 +115,10 @@ try {
     assert.ok(snapshot.colors > 8, 'Software WebGL must render a nonblank, multicolour game frame');
     fs.writeFileSync(path.join(output, '03-game-3d.png'), Buffer.from(snapshot.image.split(',')[1], 'base64'));
   } else await page.screenshot({ path: path.join(output, '03-game-3d.png') });
-  await frame.evaluate(() => window.InkballScene.navigate('desktop-return'));
+  console.log('PASS: nonblank 3D render capture');
+  // Returning removes the iframe. Evaluate in the surviving main frame so a
+  // detached-frame debugger response cannot leave Playwright waiting forever.
+  await withDeadline(page.evaluate(() => document.querySelector('#detail-3d-frame').contentWindow.InkballScene.navigate('desktop-return')), 'returning from the 3D frame', 20000);
   await wait("!document.querySelector('#detail-view').classList.contains('is-3d-playing')");
   console.log('PASS: local 3D textures, WebGL, start, pause, camera, erase and return');
   await click('[data-route="personal"]'); await click('#personal-create');
@@ -126,17 +140,17 @@ try {
   assert.deepEqual(errors, [], `Renderer errors: ${errors.join('\n')}`);
   assert.deepEqual(failedRequests, [], `Failed offline requests: ${failedRequests.join('\n')}`);
   const profile = await page.evaluate(() => InkBallNative.call('profile'));
-  await desktop.close(); desktop = null;
+  await closeDesktop();
   const diskProfile = JSON.parse(fs.readFileSync(path.join(data, 'InkBall', 'profile.json'), 'utf8'));
   assert.equal(diskProfile.id, profile.id); assert.equal(diskProfile.name, 'Windows Tester');
   fs.writeFileSync(path.join(output, 'result.json'), JSON.stringify({ passed: true, version: '0.1.4', mode: process.env.SPHERAIL_EXE ? 'packaged' : 'source', errors, failedRequests }, null, 2));
   console.log(`Windows smoke test passed. Screenshots: ${output}`);
 } catch (error) {
   console.error('Renderer errors:', errors); console.error('Failed requests:', failedRequests);
-  if (desktop) { const windows = desktop.windows(); if (windows[0]) await windows[0].screenshot({ path: path.join(output, 'failure.png') }).catch(() => {}); }
+  if (desktop && !process.env.CI) { const windows = desktop.windows(); if (windows[0]) await windows[0].screenshot({ path: path.join(output, 'failure.png'), timeout: 5000 }).catch(() => {}); }
   throw error;
 } finally {
-  await desktop?.close().catch(() => {});
+  await closeDesktop();
   assert.equal(path.dirname(data), os.tmpdir());
   fs.rmSync(data, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
 }
