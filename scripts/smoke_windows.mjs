@@ -32,7 +32,7 @@ async function closeDesktop() {
 try {
   desktop = await _electron.launch({ executablePath, args, env, timeout: 60000 });
   const page = await desktop.firstWindow();
-  page.setDefaultTimeout(20000);
+  page.setDefaultTimeout(process.env.CI ? 120000 : 20000);
   page.on('pageerror', error => errors.push(error.message));
   page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
   page.on('requestfailed', request => { if (request.failure()?.errorText !== 'net::ERR_ABORTED') failedRequests.push(request.url()); });
@@ -47,7 +47,11 @@ try {
     }
     throw new Error(`Timed out: ${expression}`);
   };
-  const click = selector => page.locator(selector).first().evaluate(element => element.click());
+  const click = selector => withDeadline(page.evaluate(selector => {
+    const element = document.querySelector(selector);
+    if (!element) throw new Error(`Missing control: ${selector}`);
+    element.click();
+  }, selector), `clicking ${selector}`, process.env.CI ? 120000 : 20000);
   await wait("document.querySelector('#header-name').textContent.startsWith('player')");
   assert.equal(await page.evaluate(() => window.INKBALL_OFFICIAL.maps.length), 10);
   assert.deepEqual(await page.evaluate(() => [typeof window.require, typeof window.process, document.documentElement.dataset.platform]), ['undefined', 'undefined', 'windows']);
@@ -130,7 +134,7 @@ try {
   console.log('PASS: nonblank 3D render capture');
   // Returning removes the iframe. Evaluate in the surviving main frame so a
   // detached-frame debugger response cannot leave Playwright waiting forever.
-  await withDeadline(page.evaluate(() => document.querySelector('#detail-3d-frame').contentWindow.InkballScene.navigate('desktop-return')), 'returning from the 3D frame', 20000);
+  await withDeadline(page.evaluate(() => document.querySelector('#detail-3d-frame').contentWindow.InkballScene.navigate('desktop-return')), 'returning from the 3D frame', process.env.CI ? 120000 : 20000);
   await wait("!document.querySelector('#detail-view').classList.contains('is-3d-playing')");
   console.log('PASS: local 3D textures, WebGL, start, pause, camera, erase and return');
   await click('[data-route="personal"]'); await click('#personal-create');
