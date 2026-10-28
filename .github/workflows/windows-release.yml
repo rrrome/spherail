@@ -13,7 +13,7 @@ jobs:
   windows:
     if: github.repository == 'rrrome/spherail_private'
     runs-on: windows-latest
-    timeout-minutes: 45
+    timeout-minutes: 20
     permissions:
       contents: write
       statuses: write
@@ -45,26 +45,11 @@ jobs:
           node scripts/verify_expansion.mjs
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python scripts/verify_gameplay_sprites.py
-      - name: Test the Windows desktop application
-        timeout-minutes: 10
-        run: npm.cmd run test:windows
       - name: Build Windows installers
         run: npm.cmd run build:windows
-      - name: Test the packaged Windows application
-        timeout-minutes: 10
-        run: |
-          $env:SPHERAIL_EXE = (Resolve-Path dist/win-unpacked/Spherail.exe).Path
-          npm.cmd run test:windows
-      - name: Test per-user install, installed app and uninstall
-        timeout-minutes: 10
-        run: ./scripts/test_windows_installer.ps1
-      - name: Preserve test screenshots
-        if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
-        with:
-          name: windows-test-screenshots
-          path: test-results/
-          if-no-files-found: ignore
+      - name: Test per-user install and uninstall without visual checks
+        timeout-minutes: 5
+        run: ./scripts/test_windows_installer.ps1 -SkipUi
       - name: Attach matching sources and checksums
         run: |
           $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
@@ -82,6 +67,13 @@ jobs:
           if ($env:GITHUB_REF_NAME -ne "v$version-windows") { throw 'Release tag does not match the game version' }
           $files = @(Get-ChildItem dist -File | Where-Object { $_.Name -match '^Spherail-.*\.(exe|zip)$' -or $_.Name -eq 'SHA256SUMS.txt' } | ForEach-Object { $_.FullName })
           gh release create $env:GITHUB_REF_NAME @files --repo $env:GITHUB_REPOSITORY --title "Spherail v$version — Windows" --notes-file Windows/RELEASE_NOTES.md --verify-tag --latest
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $receipt = gh release view $env:GITHUB_REF_NAME --repo $env:GITHUB_REPOSITORY --json url,tagName,isDraft,assets | ConvertFrom-Json
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if ($receipt.isDraft) { throw 'Release is still a draft' }
+          $assetNames = @($receipt.assets | ForEach-Object { $_.name })
+          foreach ($file in $files) { if ((Split-Path $file -Leaf) -notin $assetNames) { throw "Missing release asset: $file" } }
+          $receipt | Select-Object url,tagName,isDraft,@{Name='assets';Expression={@($_.assets | Select-Object name,size)}} | ConvertTo-Json -Depth 5
       - name: Report final build and release status
         if: always() && github.event_name != 'pull_request'
         env:

@@ -45,6 +45,8 @@ Remove-Item Env:SPHERAIL_EXE
 
 产物在 `dist/`，UI 测试截图在 `test-results/`。构建脚本会检查 Windows 与 Mac 的版本号相同，复用 Mac 版图标，打包安装版、便携版和 ZIP 版。`v*-windows` 标签触发 GitHub Actions，在 Windows 上重新构建并测试，通过后向 `rrrome/spherail_private` 发布 Release、对应源码 ZIP 和 SHA-256 校验文件。公开仓库不接收此流程的提交或发行包。
 
+发布流水线执行非视觉功能测试及安装卸载检查，不重复视觉验收。上述 `test:windows` 截图检查保留为手动可选命令；只验证安装卸载可运行 `.\scripts\test_windows_installer.ps1 -SkipUi`。
+
 ## Windows / English
 
 Requires Windows 10/11 x64. Use the per-user Setup installer, the Portable executable, or extract the complete ZIP and run `Spherail.exe`. Saves are stored in `%APPDATA%\Spherail\InkBall` and survive uninstalling. No developer tools or internet connection are required to play.

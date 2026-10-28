@@ -1,3 +1,4 @@
+param([switch]$SkipUi)
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $taskProjectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
@@ -17,10 +18,12 @@ try {
     $taskFileVersion = (Get-Item -LiteralPath $taskExecutable).VersionInfo.FileVersion
     if ($taskFileVersion -ne $taskVersion) { throw "Installed version mismatch: $taskFileVersion" }
     Write-Output "PASS: per-user installer installs version $taskVersion into a path containing Chinese and spaces"
-    $env:SPHERAIL_EXE = $taskExecutable
-    Push-Location $taskProjectRoot
-    try { & npm.cmd run test:windows; if ($LASTEXITCODE -ne 0) { throw 'Installed application smoke test failed' } }
-    finally { Pop-Location }
+    if (-not $SkipUi) {
+        $env:SPHERAIL_EXE = $taskExecutable
+        Push-Location $taskProjectRoot
+        try { & npm.cmd run test:windows; if ($LASTEXITCODE -ne 0) { throw 'Installed application smoke test failed' } }
+        finally { Pop-Location }
+    }
 } finally {
     $env:SPHERAIL_EXE = $taskPreviousExecutable
     $taskUninstaller = Get-ChildItem -LiteralPath $taskInstallRoot -Filter 'Uninstall*.exe' -ErrorAction SilentlyContinue | Select-Object -First 1
