@@ -12,7 +12,8 @@ fs.mkdirSync(output, { recursive: true });
 const data = fs.mkdtempSync(path.join(os.tmpdir(), 'spherail-ui-'));
 const executablePath = process.env.SPHERAIL_EXE || require('electron');
 const flags = [`--spherail-test-data=${data}`, '--spherail-no-discovery', '--spherail-hidden'];
-if (process.env.CI) flags.push('--use-angle=swiftshader', '--enable-unsafe-swiftshader');
+if (process.env.SPHERAIL_SOFTWARE_GPU) flags.push('--use-angle=swiftshader', '--enable-unsafe-swiftshader');
+else if (process.env.CI) flags.push('--enable-unsafe-swiftshader');
 const args = process.env.SPHERAIL_EXE ? flags : [root, ...flags];
 const env = { ...process.env }; delete env.ELECTRON_RUN_AS_NODE;
 const errors = [], failedRequests = [];
@@ -111,17 +112,20 @@ try {
       const renderer = window.Inkball3D.renderer;
       window.Inkball3D.renderFrame();
       const canvas = renderer.domElement, gl = renderer.getContext();
-      const pixels = new Uint8Array(canvas.width * canvas.height * 4);
-      gl.readPixels(0, 0, canvas.width, canvas.height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
-      const colors = new Set();
-      for (let index = 0; index < pixels.length; index += 4 * 521) colors.add(`${pixels[index]},${pixels[index + 1]},${pixels[index + 2]}`);
-      return { image: canvas.toDataURL('image/png'), colors: colors.size, width: canvas.width, height: canvas.height,
+      return { image: canvas.toDataURL('image/png'), width: canvas.width, height: canvas.height,
         contextLost: gl.isContextLost(), glError: gl.getError(), started: window.Inkball3D.started, paused: window.Inkball3D.paused };
     });
     fs.writeFileSync(path.join(output, '03-game-3d.png'), Buffer.from(snapshot.image.split(',')[1], 'base64'));
+    // Check the image a user can actually view, rather than a discarded WebGL
+    // back buffer (the production context uses preserveDrawingBuffer=false).
+    const pixels = await desktop.evaluate(({ nativeImage }, dataURL) => {
+      const image = nativeImage.createFromDataURL(dataURL), bitmap = image.toBitmap(), colors = new Set();
+      for (let index = 0; index < bitmap.length; index += 4 * 521) colors.add(`${bitmap[index]},${bitmap[index + 1]},${bitmap[index + 2]}`);
+      return { colors: colors.size, empty: image.isEmpty() };
+    }, snapshot.image);
     const { image: _image, ...diagnostics } = snapshot;
-    console.log('3D frame diagnostics:', JSON.stringify(diagnostics));
-    assert.ok(snapshot.colors > 8, 'Software WebGL must render a nonblank, multicolour game frame');
+    console.log('3D frame diagnostics:', JSON.stringify({ ...diagnostics, ...pixels }));
+    assert.ok(!pixels.empty && pixels.colors > 8, 'WebGL must render a nonblank, multicolour game frame');
   } else await page.screenshot({ path: path.join(output, '03-game-3d.png') });
   console.log('PASS: nonblank 3D render capture');
   // Returning removes the iframe. Evaluate in the surviving main frame so a
@@ -154,11 +158,16 @@ try {
   fs.writeFileSync(path.join(output, 'result.json'), JSON.stringify({ passed: true, version: '0.1.4', mode: process.env.SPHERAIL_EXE ? 'packaged' : 'source', errors, failedRequests }, null, 2));
   console.log(`Windows smoke test passed. Screenshots: ${output}`);
 } catch (error) {
+  console.error(error.stack || error);
   console.error('Renderer errors:', errors); console.error('Failed requests:', failedRequests);
   if (desktop && !process.env.CI) { const windows = desktop.windows(); if (windows[0]) await windows[0].screenshot({ path: path.join(output, 'failure.png'), timeout: 5000 }).catch(() => {}); }
   throw error;
 } finally {
   await closeDesktop();
   assert.equal(path.dirname(data), os.tmpdir());
-  fs.rmSync(data, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
+  try { fs.rmSync(data, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 }); }
+  catch (error) {
+    if (!['EPERM', 'EBUSY'].includes(error.code)) throw error;
+    console.warn(`The runner still holds a temporary Chromium file: ${data}`);
+  }
 }
