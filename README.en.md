@@ -2,7 +2,7 @@
 
 [简体中文](README.md) | **English**
 
-**Windows:** version `0.1.4`, matching macOS. See [Windows setup and build instructions](Windows/README.md). Windows binaries are published to the [private repository Releases](https://github.com/rrrome/spherail_private/releases). The native Swift build and Bluetooth instructions below apply to macOS.
+**Windows:** version `0.1.4`, matching macOS. See [Windows setup and build instructions](Windows/README.md). Download Windows binaries from [Windows Releases](https://github.com/rrrome/spherail/releases/tag/v0.1.4-windows). The native Swift build and Bluetooth instructions below apply to macOS.
 
 [License: GPL-3.0-only](LICENSE)
 

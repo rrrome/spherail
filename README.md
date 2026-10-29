@@ -2,7 +2,7 @@
 
 **简体中文** | [English](README.en.md)
 
-**Windows 版：**与 Mac 版同为 `0.1.4`。安装包、便携版、功能说明和构建方式见 [Windows 使用说明](Windows/README.md)。Windows 发行包发布到 [私有仓库 Releases](https://github.com/rrrome/spherail_private/releases)。以下原生 Swift 构建与蓝牙说明适用于 Mac。
+**Windows 版：**与 Mac 版同为 `0.1.4`。安装包、便携版、功能说明和构建方式见 [Windows 使用说明](Windows/README.md)。Windows 发行包见 [Windows Releases](https://github.com/rrrome/spherail/releases/tag/v0.1.4-windows)。以下原生 Swift 构建与蓝牙说明适用于 Mac。
 
 [许可证：GPL-3.0-only](LICENSE)
 

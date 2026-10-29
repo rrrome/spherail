@@ -4,13 +4,13 @@ Windows 游戏版本与 `AppInfo.plist` 中的 Mac 版一致：**0.1.4**。
 
 ## 安装
 
-支持 Windows 10/11 x64。下载私有仓库 Release 中的 `Spherail-0.1.4-Windows-x64-Setup.exe`，选择安装位置后启动。安装程序只为当前用户安装，无需管理员权限。
+支持 Windows 10/11 x64。下载 [Windows Release](https://github.com/rrrome/spherail/releases/tag/v0.1.4-windows) 中的 `Spherail-0.1.4-Windows-x64-Setup.exe`，选择安装位置后启动。安装程序只为当前用户安装，无需管理员权限。
 
 也可以使用 `Portable.exe`，或完整解压 `.zip` 后运行其中的 `Spherail.exe`。安装版、便携版和 ZIP 版都使用 `%APPDATA%\Spherail\InkBall` 保存玩家资料、自制地图、成绩和成就；卸载会保留存档。不要仅从 ZIP 中取出 EXE，旁边的资源文件也是运行所需的。
 
 发行包包含 Electron 运行时、全部游戏素材、Three.js 和离线贴图，玩家无需安装 Node.js、Python、Swift 或 WebView2，也无需联网。
 
-安装包尚未进行商业代码签名，Windows 可能显示“未知发布者”或 SmartScreen 提示。请从本私有仓库下载，并核对 Release 的 SHA-256 校验文件。
+安装包尚未进行商业代码签名，Windows 可能显示“未知发布者”或 SmartScreen 提示。请从上述 Windows Release 下载，并核对 Release 的 SHA-256 校验文件。
 
 ## 功能
 
@@ -43,7 +43,7 @@ Remove-Item Env:SPHERAIL_EXE
 .\scripts\test_windows_installer.ps1
 ```
 
-产物在 `dist/`，UI 测试截图在 `test-results/`。构建脚本会检查 Windows 与 Mac 的版本号相同，复用 Mac 版图标，打包安装版、便携版和 ZIP 版。`v*-windows` 标签触发 GitHub Actions，在 Windows 上重新构建并测试，通过后向 `rrrome/spherail_private` 发布 Release、对应源码 ZIP 和 SHA-256 校验文件。公开仓库不接收此流程的提交或发行包。
+产物在 `dist/`，UI 测试截图在 `test-results/`。构建脚本会检查 Windows 与 Mac 的版本号相同，复用 Mac 版图标，打包安装版、便携版和 ZIP 版。先将提交推送到 `rrrome/spherail_private`，通过验证后再同步到公开仓库。`v*-windows` 标签触发 GitHub Actions，在 Windows 上重新构建并测试，通过后向标签所在仓库发布 Release、对应源码 ZIP 和 SHA-256 校验文件。公开仓库的 Windows 发行版使用独立标签，不更改 Mac 版的发行标签或默认下载入口；发布后将对应产物同步到本地 `dist/`。
 
 发布流水线执行非视觉功能测试及安装卸载检查，不重复视觉验收。上述 `test:windows` 截图检查保留为手动可选命令；只验证安装卸载可运行 `.\scripts\test_windows_installer.ps1 -SkipUi`。
 

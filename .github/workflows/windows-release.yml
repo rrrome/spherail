@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   windows:
-    if: github.repository == 'rrrome/spherail_private'
+    if: github.repository == 'rrrome/spherail_private' || github.repository == 'rrrome/spherail'
     runs-on: windows-latest
     timeout-minutes: 20
     permissions:
@@ -58,21 +58,22 @@ jobs:
           $files = Get-ChildItem dist -File | Where-Object { $_.Name -match '^Spherail-.*\.(exe|zip)$' } | Sort-Object Name
           $lines = $files | ForEach-Object { (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant() + '  ' + $_.Name }
           $lines | Set-Content -Path dist/SHA256SUMS.txt -Encoding utf8NoBOM
-      - name: Publish private Windows release
+      - name: Publish Windows release
         if: startsWith(github.ref, 'refs/tags/')
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
           if ($env:GITHUB_REF_NAME -ne "v$version-windows") { throw 'Release tag does not match the game version' }
+          $latest = if ($env:GITHUB_REPOSITORY -eq 'rrrome/spherail') { '--latest=false' } else { '--latest' }
           $files = @(Get-ChildItem dist -File | Where-Object { $_.Name -match '^Spherail-.*\.(exe|zip)$' -or $_.Name -eq 'SHA256SUMS.txt' } | ForEach-Object { $_.FullName })
           $existingRelease = gh release view $env:GITHUB_REF_NAME --repo $env:GITHUB_REPOSITORY --json tagName 2>$null
           if ($LASTEXITCODE -eq 0) {
             gh release upload $env:GITHUB_REF_NAME @files --repo $env:GITHUB_REPOSITORY --clobber
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-            gh release edit $env:GITHUB_REF_NAME --repo $env:GITHUB_REPOSITORY --title "Spherail v$version — Windows" --notes-file Windows/RELEASE_NOTES.md --target $env:GITHUB_SHA --latest
+            gh release edit $env:GITHUB_REF_NAME --repo $env:GITHUB_REPOSITORY --title "Spherail v$version — Windows" --notes-file Windows/RELEASE_NOTES.md --target $env:GITHUB_SHA $latest
           } else {
-            gh release create $env:GITHUB_REF_NAME @files --repo $env:GITHUB_REPOSITORY --title "Spherail v$version — Windows" --notes-file Windows/RELEASE_NOTES.md --verify-tag --latest
+            gh release create $env:GITHUB_REF_NAME @files --repo $env:GITHUB_REPOSITORY --title "Spherail v$version — Windows" --notes-file Windows/RELEASE_NOTES.md --verify-tag $latest
           }
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           $receipt = gh release view $env:GITHUB_REF_NAME --repo $env:GITHUB_REPOSITORY --json url,tagName,isDraft,assets | ConvertFrom-Json
