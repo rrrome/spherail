@@ -47,6 +47,11 @@ jobs:
           python scripts/verify_gameplay_sprites.py
       - name: Build Windows installers
         run: npm.cmd run build:windows
+      - name: Test packaged application without visual checks
+        timeout-minutes: 5
+        run: |
+          $env:SPHERAIL_EXE = Join-Path $PWD 'dist/win-unpacked/Spherail.exe'
+          npm.cmd run test:windows:functional
       - name: Test per-user install and uninstall without visual checks
         timeout-minutes: 5
         run: ./scripts/test_windows_installer.ps1 -SkipUi

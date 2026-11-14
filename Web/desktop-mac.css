@@ -1,0 +1,229 @@
+/* Desktop layout shared by Mac and Windows. The arcade palette, materials
+   and motion stay in desktop-web.css. :root preserves selector specificity. */
+
+/* Spacing and alignment */
+html:root { --mac-page-inset: 32px; }
+html:root .app-header {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto minmax(0,1fr);
+  gap: 24px;
+  padding-inline: var(--mac-page-inset);
+}
+html:root body.is-3d-playing .app-header { display: none; }
+html:root .app-header .brand { gap: 12px; }
+html:root .app-header nav { flex: none; gap: 8px; padding: 4px; }
+html:root .app-header nav button { min-height: 40px; padding: 8px 20px; white-space: nowrap; }
+html:root .profile-button { justify-self: end; min-width: 0; max-width: 100%; gap: 12px; padding: 8px 0 8px 12px; }
+html:root .profile-button span { min-width: 0; }
+html:root .map-home__masthead { padding: 16px 24px 8px; }
+html:root .map-card { gap: 12px; padding: 16px; }
+html:root .map-card__plate { min-height: 16px; padding: 0; }
+html:root .map-card__caption { padding: 4px 0 0; gap: 12px; }
+html:root .map-home__footer { padding: 16px 0 20px; }
+html:root .workshop-view { max-width: 1344px; padding: 24px var(--mac-page-inset) 40px; }
+html:root .workshop-toolbar { gap: 16px; margin: -12px 0 24px; padding: 12px 0 16px; }
+html:root .workshop-search { width: min(100%,720px); grid-template-columns: auto minmax(0,1fr) auto; }
+html:root .workshop-search__input { max-width: none; }
+html:root .workshop-search__submit { padding-inline: 16px; }
+html:root .workshop-count { margin: 0 0 16px; }
+html:root .workshop-grid { grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap: 24px; }
+html:root .workshop-card__title { padding: 12px 16px; }
+html:root .workshop-card__actions { flex-basis: 64px; height: 64px; gap: 8px; padding: 12px; }
+html:root .workshop-card__actions button { height: 40px; gap: 8px; }
+html:root .workshop-card__actions .workshop-card__delete { flex-basis: 40px; }
+html:root .workshop-card__create-content { gap: 16px; }
+
+/* Preserve the existing typeface and colour roles; reduce competing emphasis. */
+html:root button { font-weight: 600; }
+html:root .app-header .brand { letter-spacing: .04em; font-size: 20px; }
+html:root .eyebrow,
+html:root .arcade-eyebrow { font-size: 12px; font-weight: 500; letter-spacing: .06em; text-transform: none; }
+html:root .map-card__name { min-width: 0; font-size: clamp(16px,1.6vw,20px); font-weight: 600; letter-spacing: 0; overflow-wrap: anywhere; }
+html:root .map-card__plate { font-weight: 500; letter-spacing: .08em; }
+html:root .workshop-card__title { font-size: 16px; font-weight: 600; }
+html:root .workshop-count { font-size: 16px; font-weight: 500; }
+html:root .map-detail__name { max-width: 100%; font-size: clamp(28px,3.2vw,40px); font-weight: 600; line-height: 1.2; letter-spacing: 0; overflow-wrap: anywhere; }
+html:root .map-panel__title,
+html:root .map-achievement__title,
+html:root .community-name span,
+html:root .community-palette__title,
+html:root .community-difficulty-status,
+html:root .profile-card__fields label,
+html:root .profile-transparency { font-weight: 500; }
+html:root .map-panel__readouts dd,
+html:root .map-detail__best-record dd { font-weight: 500; font-variant-numeric: tabular-nums; }
+html:root .community-palette__title { letter-spacing: 0; }
+
+/* Briefing: retain section order, the board backdrop and fixed-height panels. */
+html:root .map-detail__ui { width: min(100%,1088px); gap: 12px; padding: 80px var(--mac-page-inset) 40px; }
+html:root .map-detail__tabs { gap: 12px; margin: 12px 0; }
+html:root .map-detail__tab { width: 136px; min-height: 64px; gap: 4px; padding: 8px 16px; }
+html:root .map-detail__ball-count { font-weight: 500; }
+html:root .map-detail__grid { grid-template-columns: minmax(0,1fr) minmax(0,.9fr) minmax(0,1.2fr); max-width: none; gap: 16px; align-items: stretch; }
+html:root .map-detail__grid > .map-panel { height: 256px; min-height: 256px; max-height: 256px; padding: 20px; overflow: hidden; }
+html:root .map-panel__title { margin: 0 0 16px; padding-bottom: 12px; }
+html:root .map-detail__best-record { gap: 12px; }
+html:root .map-detail__best-record dt { font-size: 13px; }
+html:root .map-detail__best-record dd { font-size: 16px; }
+html:root .map-panel__readouts { grid-template-columns: 1fr; gap: 12px; }
+html:root .map-panel__readouts > div { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+html:root .map-panel__readouts dt { font-size: 13px; }
+html:root .map-panel__readouts dd { margin: 0; font-size: 16px; }
+html:root .map-achievements__list { gap: 12px; margin: auto; }
+html:root .map-achievement { grid-template-columns: 24px minmax(0,1fr); gap: 12px; }
+html:root .map-detail__actions { width: 100%; margin-top: 16px; }
+html:root .map-detail__primary-actions { gap: 12px; }
+html:root #detail-start,
+html:root #detail-duel { min-width: 192px; min-height: 48px; font-size: 16px; }
+html:root .map-detail__export-tools { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 12px; max-width: calc(100% - 120px); }
+html:root .map-detail__export-tools p { flex-basis: 100%; text-align: right; }
+
+/* Editor: aligned work surfaces, unchanged canvas and tools. */
+html:root .community-editor { height: 100dvh; }
+html:root .community-top { grid-template-columns: minmax(104px,1fr) minmax(200px,360px) minmax(200px,1fr); gap: 24px; min-height: 80px; padding: 12px 24px; }
+html:root .community-top__nav,
+html:root .community-top__actions { gap: 12px; }
+html:root .community-top__actions { justify-content: flex-end; flex-wrap: wrap; }
+html:root .community-top__actions button { white-space: nowrap; }
+html:root .community-top__actions [role="status"]:empty { display: none; }
+html:root .community-name { gap: 8px; }
+html:root .community-name input { min-height: 40px; padding: 8px 12px; }
+html:root .community-difficulty-tabs { gap: 12px; padding: 16px 24px; }
+html:root .community-difficulty-tabs button { min-height: 40px; min-width: 112px; padding: 8px 16px; }
+html:root .community-body { grid-template-columns: minmax(184px,216px) minmax(0,576px) minmax(200px,240px); align-items: start; align-content: center; gap: 24px; padding: 8px 24px 80px; overflow: hidden; }
+html:root .community-palette,
+html:root .community-settings { width: 100%; height: min(calc(100dvh - 248px),576px); min-height: 0; max-height: none; gap: 16px; padding: 16px; }
+html:root .community-board-wrap { grid-row: auto; width: min(100%,calc(100dvh - 248px),576px); }
+html:root .community-palette__group + .community-palette__group { padding-top: 16px; }
+html:root .community-palette__title { margin-bottom: 12px; }
+html:root .community-palette__items { gap: 4px; }
+html:root .community-field { gap: 8px; }
+html:root .community-stepper { justify-content: space-between; }
+html:root .community-stepper input { width: 100%; min-width: 0; min-height: 40px; }
+html:root .community-serve-source { gap: 4px; }
+html:root .community-serve-source__item { width: 32px; height: 32px; margin: 0; }
+html:root #editor-save,
+html:root #editor-playtest { min-height: 40px; flex-shrink: 0; }
+html:root #editor-status:empty { display: none; }
+html:root .community-edit-history { gap: 8px; padding: 4px; bottom: 16px; }
+html:root .community-edit-tools { gap: 8px; left: 24px; bottom: 16px; }
+html:root .community-top .tile-guide { top: 88px; left: 24px; max-height: calc(100dvh - 112px); }
+html:root .tile-guide__row,
+html:root .tile-guide__swatch { gap: 12px; }
+html:root .tile-guide__item { padding: 8px; }
+html:root .tile-guide__title { margin-bottom: 16px; font-weight: 600; }
+
+/* Match setup follows one left edge from the title through player rows. */
+html:root #match-view { max-width: 1024px; padding: 32px var(--mac-page-inset) 48px; }
+html:root #match-view .section-heading { margin-bottom: 24px; gap: 24px; }
+html:root #match-view .section-heading h1 { font-size: 32px; font-weight: 600; }
+html:root .match-setup { width: 100%; max-width: none; margin: 0; padding: 24px; }
+html:root .match-setup__map { gap: 8px 16px; padding-bottom: 24px; }
+html:root .match-setup__map strong { font-size: 24px; font-weight: 600; overflow-wrap: anywhere; }
+html:root .match-setup__guide { gap: 24px; padding: 24px 0; }
+html:root .match-setup__players { gap: 16px; padding: 24px 0 16px; flex-wrap: wrap; }
+html:root .match-setup__guide h2,
+html:root .match-setup__players h2 { margin-bottom: 8px; font-size: 18px; font-weight: 600; }
+html:root .match-peer-list { gap: 12px; }
+html:root .match-peer { gap: 16px; padding: 16px; }
+html:root .match-peer__info { gap: 4px; }
+html:root .match-peer__info strong { font-weight: 600; }
+html:root .match-pending { gap: 16px; padding: 16px; }
+html:root .match-connection-metrics { gap: 8px; top: 16px; }
+html:root .match-connection-metrics span { padding: 8px; }
+
+/* Result figures form one block within the existing paper ticket. */
+html:root #result-view.result-page {
+  --result-tile: min(32px,calc((100vw - 64px) / 18),calc((100dvh - 160px) / 18));
+  padding: 24px 24px 104px;
+}
+html:root .result-card__emblem { width: calc(var(--result-tile) * 2); height: calc(var(--result-tile) * 2); margin-bottom: 16px; }
+html:root .result-card__heading { gap: 12px; margin-bottom: 24px; }
+html:root .result-card__title { font-weight: 600; }
+html:root .result-map { margin-bottom: 24px; }
+html:root .result-map__name { font-weight: 600; }
+html:root .result-stats { gap: 0; }
+html:root .result-stats > div { padding: 12px 16px; border: 0; border-top: 1px solid #a7b299; border-radius: 0; background: transparent; }
+html:root .result-stats > div:nth-child(even) { border-left: 1px solid #a7b299; }
+html:root .result-stats dt { font-size: 13px; }
+html:root .result-stats dd { font-weight: 500; font-variant-numeric: tabular-nums; }
+html:root .result-match-stats { gap: 24px; }
+html:root .result-match-stats .result-stats { gap: 0; }
+html:root .result-match-stats .result-stats > div { border-left: 0; padding: 8px 0; }
+html:root .result-match-side__name { margin-bottom: 12px; font-weight: 600; }
+html:root .result-btn { bottom: 24px; font-weight: 600; letter-spacing: 0; }
+html:root .result-btn--restart { left: 24px; }
+html:root .result-btn--continue { right: 24px; }
+
+/* Dialogs retain content order and existing actions. */
+html:root .dialog-body { padding: 24px; }
+html:root .dialog-body > h2 { margin: 0 0 16px; font-size: 24px; font-weight: 600; }
+html:root .dialog-body > p { line-height: 1.6; overflow-wrap: anywhere; }
+html:root .dialog-body > .actions { justify-content: flex-end; gap: 12px; margin-top: 24px; }
+html:root .dialog-body textarea { max-width: 100%; }
+html:root .profile-card { gap: 24px; padding-bottom: 0; }
+html:root .profile-card__identity { gap: 16px; padding: 16px; }
+html:root .profile-card__header h2 { font-size: 24px; font-weight: 600; }
+html:root .profile-card__fields { gap: 16px; }
+html:root .profile-card__fields input,
+html:root .profile-card__fields select { margin-top: 8px; }
+html:root .profile-transparency__control { gap: 16px; }
+html:root .profile-transparency-preview { margin-top: 12px; }
+html:root .profile-avatar__heading h3 { font-size: 16px; font-weight: 600; }
+html:root .profile-avatar__actions,
+html:root .profile-card__footer { gap: 12px; }
+html:root #profile-status:empty { display: none; }
+html:root .profile-card__footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  margin: 0 -24px;
+  padding: 16px 24px;
+  background: #23474a;
+}
+html:root .timed-wall-dialog__body { gap: 16px; padding: 32px; }
+html:root .timed-wall-dialog h2 { font-size: 28px; font-weight: 600; }
+html:root .timed-wall-dialog label { font-size: 16px; font-weight: 500; }
+html:root .timed-wall-dialog__field { gap: 16px; }
+html:root .timed-wall-dialog__field input { min-height: 48px; font-size: 24px; font-weight: 500; }
+html:root .timed-wall-dialog__hint { margin: 0; }
+html:root .timed-wall-dialog__actions { gap: 12px; margin-top: 8px; }
+html:root .timed-wall-dialog__actions button { min-height: 44px; font-size: 16px; }
+html:root .pause-dialog { padding: 24px; }
+html:root .pause-dialog__tab { font-size: 28px; font-weight: 600; letter-spacing: 0; }
+html:root .pause-actions { gap: 12px; }
+html:root .pause-action { gap: 12px; height: 112px; padding: 12px; font-weight: 600; }
+
+/* Short windows scroll the briefing; narrow windows retain the three editor
+   surfaces without scaling down text or the canvas coordinate system. */
+@media (max-width: 1000px) {
+  html:root { --mac-page-inset: 24px; }
+  html:root .community-top { gap: 16px; padding-inline: 16px; }
+  html:root .community-body { gap: 16px; padding-inline: 16px; }
+  html:root .community-palette,
+  html:root .community-settings { padding: 12px; }
+  html:root .map-detail__grid > .map-panel { padding: 16px; }
+}
+@media (max-width: 800px) {
+  html:root { --mac-page-inset: 20px; }
+  html:root .app-header { gap: 16px; }
+  html:root .app-header nav button { padding-inline: 16px; }
+  html:root .map-detail__grid { grid-template-columns: 1fr; max-width: 560px; gap: 12px; }
+  html:root .map-detail__grid > .map-panel { padding: 12px; }
+  html:root .map-achievement { gap: 8px; }
+  html:root .community-top { grid-template-columns: 104px minmax(160px,1fr) auto; }
+  html:root .community-top__actions { gap: 8px; }
+  html:root .community-top__actions button { padding-inline: 12px; font-size: 13px; }
+  html:root .community-body { grid-template-columns: 172px minmax(0,1fr) 192px; gap: 12px; }
+}
+@media (max-height: 680px) {
+  html:root .map-detail__ui { justify-content: flex-start; }
+  html:root .community-difficulty-tabs { padding-block: 12px; }
+  html:root .community-palette,
+  html:root .community-settings { height: calc(100dvh - 232px); }
+  html:root .community-board-wrap { width: min(100%,calc(100dvh - 232px),576px); }
+  html:root .result-card__emblem { margin-bottom: 8px; }
+  html:root .result-card__heading,
+  html:root .result-map { margin-bottom: 12px; }
+  html:root .result-stats > div { padding-block: 8px; }
+}

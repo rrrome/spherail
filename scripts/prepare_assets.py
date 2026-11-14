@@ -22,6 +22,10 @@ sprites = WEB / 'img' / 'inkball'
 sprites.mkdir(parents=True, exist_ok=True)
 for art in (APP / 'Assets' / 'Gameplay').glob('*.png'):
     shutil.copy2(art, sprites / art.name)
+mac_sprites = sprites / 'mac'
+mac_sprites.mkdir(parents=True, exist_ok=True)
+for art in (APP / 'Assets' / 'GameplayMac').glob('*.png'):
+    shutil.copy2(art, mac_sprites / art.name)
 prepare_editor_tiles(WEB)
 translations = {
     language: json.loads((WEB / f'i18n/{language}.json').read_text(encoding='utf-8'))

@@ -50,7 +50,7 @@ else {
       switch (action) {
         case 'bootstrap':
           if (!noDiscovery) await matches.start().catch(error => matches.notify('matchError', { message: error.message }));
-          return { appInfo: { version, build: '5', platform: 'windows', capabilities: { wifi: true, bluetooth: false } }, profile: store.profile(),
+          return { appInfo: { version, build: '6', platform: 'windows', capabilities: { wifi: true, bluetooth: false } }, profile: store.profile(),
             maps: store.maps(), records: store.records(), achievements: store.achievements(), match: matches.state() };
         case 'profile': return store.profile();
         case 'updateLanguage': return store.updateLanguage(payload.language);
@@ -76,7 +76,7 @@ else {
         default: throw new Error('Unknown app command.');
       }
     });
-    window = new BrowserWindow({ width: 1100, height: 820, minWidth: 720, minHeight: 620, title: 'Spherail',
+    window = new BrowserWindow({ width: 1100, height: 780, useContentSize: true, minWidth: 720, minHeight: 580, title: 'Spherail',
       backgroundColor: '#173d40', show: !process.argv.includes('--spherail-hidden'),
       icon: path.join(root, 'Assets', 'Windows', 'Spherail.ico'),
       webPreferences: { preload: path.join(__dirname, 'preload.cjs'), contextIsolation: true, nodeIntegration: false, sandbox: true, webSecurity: true, backgroundThrottling: !testData } });

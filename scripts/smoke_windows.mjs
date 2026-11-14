@@ -7,6 +7,9 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 const require = createRequire(import.meta.url);
 const root = path.resolve(fileURLToPath(new URL('../', import.meta.url)));
+const version = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')).version;
+const visual = !process.argv.includes('--no-visual');
+const macBuild = fs.readFileSync(path.join(root, 'AppInfo.plist'), 'utf8').match(/<key>CFBundleVersion<\/key>\s*<string>([^<]+)<\/string>/)[1];
 const output = path.join(root, 'test-results', process.env.SPHERAIL_EXE ? 'windows-packaged' : 'windows-source');
 fs.mkdirSync(output, { recursive: true });
 const data = fs.mkdtempSync(path.join(os.tmpdir(), 'spherail-ui-'));
@@ -55,11 +58,12 @@ try {
   await wait("document.querySelector('#header-name').textContent.startsWith('player')");
   assert.equal(await page.evaluate(() => window.INKBALL_OFFICIAL.maps.length), 10);
   assert.deepEqual(await page.evaluate(() => [typeof window.require, typeof window.process, document.documentElement.dataset.platform]), ['undefined', 'undefined', 'windows']);
+  assert.deepEqual(await page.evaluate(() => InkBallNative.call('bootstrap').then(data => [data.appInfo.version, data.appInfo.build])), [version, macBuild]);
   await wait("document.querySelectorAll('#official-map-list .is-preview-ready').length === 30");
-  await page.screenshot({ path: path.join(output, '01-home.png') });
+  if (visual) await page.screenshot({ path: path.join(output, '01-home.png') });
   console.log('PASS: offline bootstrap, 10 maps, 30 previews and isolated renderer');
   await click('#profile-open');
-  assert.equal(await page.locator('#profile-version').textContent(), 'v0.1.4');
+  assert.equal(await page.locator('#profile-version').textContent(), `v${version}`);
   await page.locator('#profile-name').fill('Windows Tester');
   await page.locator('#profile-avatar-file').setInputFiles(path.join(root, 'Assets/Windows/Spherail.png'));
   await wait("document.querySelector('#profile-avatar-preview').src.startsWith('data:image/jpeg;base64,')");
@@ -83,7 +87,7 @@ try {
   await click('[data-pause-open]'); await wait("document.querySelector('[data-pause-overlay]').open");
   assert.equal(await page.evaluate(() => window.inkballApp.isPaused), true);
   await click('[data-pause-resume]'); await wait('!window.inkballApp.isPaused');
-  await page.screenshot({ path: path.join(output, '02-game-2d.png') });
+  if (visual) await page.screenshot({ path: path.join(output, '02-game-2d.png') });
   // Exercise the existing completion path after real initialization and input.
   await page.evaluate(() => window.inkballApp._finishAttempt(false));
   await wait("!document.querySelector('#result-view').hidden");
@@ -109,7 +113,7 @@ try {
     return { paused, resumed, tool: game.drawTool, cameraLocked: game.cameraLocked };
   });
   assert.deepEqual(controls, { paused: true, resumed: true, tool: 'erase', cameraLocked: false });
-  if (process.env.CI) {
+  if (visual && process.env.CI) {
     // Chromium's hidden-window compositor can stall captureScreenshot with
     // SwiftShader. Read the actual WebGL frame instead, retaining pixel checks.
     const snapshot = await frame.evaluate(() => {
@@ -130,8 +134,8 @@ try {
     const { image: _image, ...diagnostics } = snapshot;
     console.log('3D frame diagnostics:', JSON.stringify({ ...diagnostics, ...pixels }));
     assert.ok(!pixels.empty && pixels.colors > 8, 'WebGL must render a nonblank, multicolour game frame');
-  } else await page.screenshot({ path: path.join(output, '03-game-3d.png') });
-  console.log('PASS: nonblank 3D render capture');
+  } else if (visual) await page.screenshot({ path: path.join(output, '03-game-3d.png') });
+  if (visual) console.log('PASS: nonblank 3D render capture');
   // Returning removes the iframe. Evaluate in the surviving main frame so a
   // detached-frame debugger response cannot leave Playwright waiting forever.
   await withDeadline(page.evaluate(() => document.querySelector('#detail-3d-frame').contentWindow.InkballScene.navigate('desktop-return')), 'returning from the 3D frame', process.env.CI ? 120000 : 20000);
@@ -151,7 +155,7 @@ try {
   await click('#editor-export');
   const clipboardText = await desktop.evaluate(({ clipboard }) => clipboard.readText());
   assert.ok(clipboardText.startsWith('INKBALL-LEVEL/1\n'));
-  await page.screenshot({ path: path.join(output, '04-editor.png') });
+  if (visual) await page.screenshot({ path: path.join(output, '04-editor.png') });
   console.log('PASS: editor import, save, export and native clipboard');
   assert.deepEqual(errors, [], `Renderer errors: ${errors.join('\n')}`);
   assert.deepEqual(failedRequests, [], `Failed offline requests: ${failedRequests.join('\n')}`);
@@ -159,12 +163,12 @@ try {
   await closeDesktop();
   const diskProfile = JSON.parse(fs.readFileSync(path.join(data, 'InkBall', 'profile.json'), 'utf8'));
   assert.equal(diskProfile.id, profile.id); assert.equal(diskProfile.name, 'Windows Tester');
-  fs.writeFileSync(path.join(output, 'result.json'), JSON.stringify({ passed: true, version: '0.1.4', mode: process.env.SPHERAIL_EXE ? 'packaged' : 'source', errors, failedRequests }, null, 2));
-  console.log(`Windows smoke test passed. Screenshots: ${output}`);
+  fs.writeFileSync(path.join(output, 'result.json'), JSON.stringify({ passed: true, version, visual, mode: process.env.SPHERAIL_EXE ? 'packaged' : 'source', errors, failedRequests }, null, 2));
+  console.log(`Windows smoke test passed (${visual ? 'with screenshots' : 'functional only'}).`);
 } catch (error) {
   console.error(error.stack || error);
   console.error('Renderer errors:', errors); console.error('Failed requests:', failedRequests);
-  if (desktop && !process.env.CI) { const windows = desktop.windows(); if (windows[0]) await windows[0].screenshot({ path: path.join(output, 'failure.png'), timeout: 5000 }).catch(() => {}); }
+  if (visual && desktop && !process.env.CI) { const windows = desktop.windows(); if (windows[0]) await windows[0].screenshot({ path: path.join(output, 'failure.png'), timeout: 5000 }).catch(() => {}); }
   throw error;
 } finally {
   await closeDesktop();

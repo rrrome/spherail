@@ -51,6 +51,7 @@ extension WebSmokeTests {
         }
         _ = try await evaluate(webView, "document.querySelector('#detail-start').click()")
         try await awaitTrue(webView, "threeFrame.Inkball3D.started && document.body.classList.contains('is-3d-playing')")
+        try await awaitTrue(webView, "getComputedStyle(document.querySelector('.app-header')).display==='none'")
         _ = try await evaluate(webView, "threeFrame.document.querySelector('[data-prototype-camera-lock]').click(); threeFrame.document.querySelector('[data-prototype-tool=erase]').click(); threeFrame.document.querySelector('[data-prototype-pause-open]').click()")
         try await awaitTrue(webView, "threeFrame.Inkball3D.cameraLocked && threeFrame.Inkball3D.drawTool==='erase' && threeFrame.Inkball3D.paused && threeFrame.document.querySelector('[data-prototype-pause-overlay]').open")
         _ = try await evaluate(webView, "threeFrame.document.querySelector('[data-prototype-pause-resume]').click()")
@@ -92,8 +93,10 @@ extension WebSmokeTests {
             try await Task.sleep(nanoseconds: 50_000_000)
         }
         try await awaitTrue(webView, "document.body.classList.contains('is-3d-playing')")
+        try await awaitTrue(webView, "getComputedStyle(document.querySelector('.app-header')).display==='none'")
         _ = try await evaluate(webView, "document.querySelector('#detail-3d-frame').contentWindow.document.querySelector('[data-prototype-pause-home]').click()")
         try await awaitTrue(webView, "!document.querySelector('#maps-view').hidden && !document.body.classList.contains('is-3d-playing')")
+        try await awaitTrue(webView, "getComputedStyle(document.querySelector('.app-header')).display==='grid'")
         for mapID in ["spectrum-gates", "shifting-hours", "cascade-junction"] {
             _ = try await evaluate(webView, "document.querySelector('#official-map-list .map-card[data-map-slug=\(mapID)]').click(); document.querySelector('[data-detail-difficulty=master]').click(); document.querySelector('#detail-3d-toggle').click()")
             var mapReady = false

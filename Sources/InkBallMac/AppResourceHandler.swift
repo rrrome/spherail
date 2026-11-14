@@ -6,6 +6,9 @@ import UniformTypeIdentifiers
 final class AppResourceHandler: NSObject, WKURLSchemeHandler {
     static let scheme = "spherail-resource"
     static let home = URL(string: "spherail-resource://app/index.html")!
+    private static let macOneWayPaths: Set<String> = Set(["u", "d", "l", "r"].flatMap { direction in
+        (0..<5).map { "/img/inkball/one_way_\(direction)\($0).png" }
+    })
     private let root: URL
 
     init(root: URL) {
@@ -15,7 +18,12 @@ final class AppResourceHandler: NSObject, WKURLSchemeHandler {
     func resource(for url: URL) throws -> (data: Data, mimeType: String) {
         guard url.scheme == Self.scheme, url.host == "app", url.user == nil,
               url.password == nil, url.port == nil else { throw URLError(.unsupportedURL) }
-        let file = root.appendingPathComponent(url.path).standardizedFileURL.resolvingSymlinksInPath()
+        // All Mac previews, editor controls and 2D play share these requests.
+        // Both desktop resource handlers resolve the twenty one-way sprites
+        // to the same art, while leaving the other image requests unchanged.
+        let path = Self.macOneWayPaths.contains(url.path)
+            ? "/img/inkball/mac/\(url.lastPathComponent)" : url.path
+        let file = root.appendingPathComponent(path).standardizedFileURL.resolvingSymlinksInPath()
         guard file.path.hasPrefix(root.path + "/") else { throw URLError(.noPermissionsToReadFile) }
         let mimeType: String
         switch file.pathExtension.lowercased() {

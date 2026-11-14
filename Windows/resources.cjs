@@ -8,7 +8,10 @@ function resolveResource(root, rawURL) {
   if (url.protocol !== 'spherail:' || url.hostname !== 'app' || url.username || url.password || url.port) throw new Error('Invalid resource origin.');
   const requested = decodeURIComponent(url.pathname);
   if (requested.includes('\\') || requested.includes('\0')) throw new Error('Invalid resource path.');
-  const file = path.resolve(root, '.' + (requested === '/' ? '/index.html' : requested));
+  // Match the Mac resource handler for previews, editor controls and 2D play.
+  const resourcePath = /^\/img\/inkball\/one_way_[udlr][0-4]\.png$/.test(requested)
+    ? '/img/inkball/mac/' + path.posix.basename(requested) : requested;
+  const file = path.resolve(root, '.' + (resourcePath === '/' ? '/index.html' : resourcePath));
   const relative = path.relative(root, file);
   if (relative.startsWith('..') || path.isAbsolute(relative)) throw new Error('Resource is outside the app.');
   const realRoot = fs.realpathSync(root), realFile = fs.realpathSync(file);

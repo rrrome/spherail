@@ -1,10 +1,12 @@
 # Spherail / 绘轨 for Windows
 
-Windows 游戏版本与 `AppInfo.plist` 中的 Mac 版一致：**0.1.4**。
+Windows 游戏版本与 `AppInfo.plist` 中的 Mac 版一致：**0.1.5**。
+
+界面共用 Mac 0.1.5 的布局、间距、文字层级和单向砖块素材，版本信息为 **0.1.5（build 6）**。
 
 ## 安装
 
-支持 Windows 10/11 x64。下载 [Windows Release](https://github.com/rrrome/spherail/releases/tag/v0.1.4-windows) 中的 `Spherail-0.1.4-Windows-x64-Setup.exe`，选择安装位置后启动。安装程序只为当前用户安装，无需管理员权限。
+支持 Windows 10/11 x64。下载 [Mac & Windows Release](https://github.com/rrrome/spherail/releases/tag/v0.1.5) 中的 `Spherail-0.1.5-Windows-x64-Setup.exe`，选择安装位置后启动。安装程序只为当前用户安装，无需管理员权限。
 
 也可以使用 `Portable.exe`，或完整解压 `.zip` 后运行其中的 `Spherail.exe`。安装版、便携版和 ZIP 版都使用 `%APPDATA%\Spherail\InkBall` 保存玩家资料、自制地图、成绩和成就；卸载会保留存档。不要仅从 ZIP 中取出 EXE，旁边的资源文件也是运行所需的。
 
@@ -35,17 +37,17 @@ npm.cmd start
 
 ```powershell
 npm.cmd test
-npm.cmd run test:windows
+npm.cmd run test:windows:functional
 npm.cmd run build:windows
 $env:SPHERAIL_EXE = (Resolve-Path .\dist\win-unpacked\Spherail.exe).Path
-npm.cmd run test:windows
+npm.cmd run test:windows:functional
 Remove-Item Env:SPHERAIL_EXE
-.\scripts\test_windows_installer.ps1
+.\scripts\test_windows_installer.ps1 -SkipUi
 ```
 
-产物在 `dist/`，UI 测试截图在 `test-results/`。构建脚本会检查 Windows 与 Mac 的版本号相同，复用 Mac 版图标，打包安装版、便携版和 ZIP 版。先将提交推送到 `rrrome/spherail_private`，通过验证后再同步到公开仓库。`v*-windows` 标签触发 GitHub Actions，在 Windows 上重新构建并测试，通过后向标签所在仓库发布 Release、对应源码 ZIP 和 SHA-256 校验文件。公开仓库的 Windows 发行版使用独立标签，不更改 Mac 版的发行标签或默认下载入口；发布后将对应产物同步到本地 `dist/`。
+产物在 `dist/`，可选 UI 测试截图在 `test-results/`。构建脚本会检查 Windows 与 Mac 的版本号相同，复用 Mac 版图标，打包安装版、便携版和 ZIP 版。先将提交推送到 `rrrome/spherail_private`，通过验证后再同步到公开仓库。`v0.1.5` 等版本标签触发联合发行流程，分别在 Windows 和 Apple Silicon Mac 上构建与测试；全部通过后，在同一个 Release 附上两端安装包、对应源码 ZIP 和 SHA-256 校验文件。旧的 `v*-windows` 流程保留用于历史 Windows 独立发行；发布后将对应产物同步到本地 `dist/`。
 
-发布流水线执行非视觉功能测试及安装卸载检查，不重复视觉验收。上述 `test:windows` 截图检查保留为手动可选命令；只验证安装卸载可运行 `.\scripts\test_windows_installer.ps1 -SkipUi`。
+发布流水线执行非视觉功能测试及安装卸载检查，不重复视觉验收。`test:windows:functional` 验证实际应用功能且不截图，`test:windows` 截图检查保留为手动可选命令；只验证安装卸载可运行 `.\scripts\test_windows_installer.ps1 -SkipUi`。
 
 ## Windows / English
 

@@ -1,6 +1,6 @@
-Spherail / 绘轨 Windows **0.1.4**，游戏版本号与 Mac 版一致。
+Spherail / 绘轨 Windows **0.1.5**，游戏版本号与 Mac 版一致。
 
-本次同版本更新：地图编辑器左侧素材栏每行固定显示 5 个元素，窄窗口下图标自动缩放。
+本次更新：与 Mac 0.1.5（build 6）共用界面布局，包括导航、地图详情、工坊、编辑器、对战、结算和弹窗的间距与文字层级；单向砖块统一使用 Mac 版的横杆箭头素材，默认游戏内容尺寸同步为 1100 × 780。
 
 - Windows 10/11 x64；提供当前用户安装包、免安装 Portable EXE 和完整 ZIP。
 - 复用原版 2D/3D 引擎、10 张官方地图与 30 个难度、地图编辑器、双语界面、头像、成绩及成就。
@@ -12,6 +12,6 @@ Spherail / 绘轨 Windows **0.1.4**，游戏版本号与 Mac 版一致。
 
 安装包尚未商业代码签名。请核对 `SHA256SUMS.txt`，并在 Windows 防火墙提示时允许专用网络访问。
 
-对应源码：`Spherail-0.1.4-source.zip`。源代码及游戏采用 GPL-3.0-only；第三方运行时保留各自许可证。
+对应源码：`Spherail-0.1.5-source.zip`。源代码及游戏采用 GPL-3.0-only；第三方运行时保留各自许可证。
 
-Windows game version matches macOS **0.1.4**. Download Setup for a per-user install, Portable for a single executable, or extract the complete ZIP. No developer tools or internet are required to play. LAN multiplayer is included; Bluetooth is Mac-only. Cross-device Windows/Mac and other GPUs still require hardware validation. This release is unsigned. Verify the SHA-256 checksums and see `Windows/README.md` for details.
+Windows game version matches macOS **0.1.5 (build 6)**. This update shares the Mac desktop layout, typography and one-way tile artwork, with the same default content size. Download Setup for a per-user install, Portable for a single executable, or extract the complete ZIP. No developer tools or internet are required to play. LAN multiplayer is included; Bluetooth is Mac-only. Cross-device Windows/Mac and other GPUs still require hardware validation. This release is unsigned. Verify the SHA-256 checksums and see `Windows/README.md` for details.

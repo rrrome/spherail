@@ -16,6 +16,7 @@ from PIL import Image, ImageDraw
 ROOT = Path(__file__).resolve().parents[1]
 TEXTURE = ROOT / 'Assets' / 'GameplaySource' / 'ceramic.png'
 OUTPUT = ROOT / 'Assets' / 'Gameplay'
+MAC_OUTPUT = ROOT / 'Assets' / 'GameplayMac'
 S = 4
 COLORS = (
     (157, 177, 194),  # pearl
@@ -194,21 +195,30 @@ def brick(color, stage):
     return im
 
 
-def one_way(floor, color, direction):
+def one_way(floor, color, direction, *, capped=False):
     im = floor.copy()
     d = ImageDraw.Draw(im)
     rim = mix(color, (16, 54, 65), 0.49)
     roundbox(d, (2, 2, 30, 30), 4, fill=rgba(mix(color, (227, 231, 225), 0.62)),
              outline=rgba(rim), width=S)
-    # Symmetric gate rails; arrow rotation is the only direction-specific art.
+    # Keep the established face and rails identical on both platforms.
     box(d, (3, 3, 29, 6), fill=rgba(color))
     box(d, (3, 26, 29, 29), fill=rgba(color))
     arrow = [(16, 8), (23, 17), (19, 17), (19, 24), (13, 24), (13, 17), (9, 17)]
+    if capped:
+        # The Mac mark adds a transverse bar ahead of the arrow. The shorter
+        # arrow leaves a gap while keeping the combined mark centred in the cell.
+        arrow = [(16, 12), (23, 18), (19, 18), (19, 24), (13, 24), (13, 18), (9, 18)]
     theta = {'u': 0, 'r': 90, 'd': 180, 'l': 270}[direction]
     rad = math.radians(theta)
     rotated = [(16+(x-16)*math.cos(rad)-(y-16)*math.sin(rad),
                 16+(x-16)*math.sin(rad)+(y-16)*math.cos(rad)) for x, y in arrow]
     polygon(d, rotated, fill=rgba(rim))
+    if capped:
+        cap = [(9, 8), (23, 8), (23, 10), (9, 10)]
+        rotated_cap = [(16+(x-16)*math.cos(rad)-(y-16)*math.sin(rad),
+                        16+(x-16)*math.sin(rad)+(y-16)*math.cos(rad)) for x, y in cap]
+        polygon(d, rotated_cap, fill=rgba(rim))
     return im
 
 
@@ -236,6 +246,7 @@ def accelerator(floor, direction):
 
 def generate():
     OUTPUT.mkdir(parents=True, exist_ok=True)
+    MAC_OUTPUT.mkdir(parents=True, exist_ok=True)
     texture = Image.open(TEXTURE)
     floor = ceramic(texture)
     finish(floor).save(OUTPUT / 'tile.png')
@@ -249,7 +260,12 @@ def generate():
             suffix = f'_{stage}' if stage else ''
             brick(color, stage).save(OUTPUT / f'brick{index}{suffix}.png')
         for direction in 'udlr':
-            finish(one_way(floor, color, direction)).save(OUTPUT / f'one_way_{direction}{index}.png')
+            shared = finish(one_way(floor, color, direction))
+            shared.save(OUTPUT / f'one_way_{direction}{index}.png')
+            capped = finish(one_way(floor, color, direction, capped=True))
+            # Keep the original frame/rails exactly, including their edge pixels.
+            shared.paste(capped.crop((7, 7, 26, 26)), (7, 7))
+            shared.save(MAC_OUTPUT / f'one_way_{direction}{index}.png')
     for direction in 'udlr':
         finish(accelerator(floor, direction)).save(OUTPUT / f'accelerator_{direction}.png')
 

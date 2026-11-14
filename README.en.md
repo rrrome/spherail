@@ -2,7 +2,7 @@
 
 [简体中文](README.md) | **English**
 
-**Windows:** version `0.1.4`, matching macOS. See [Windows setup and build instructions](Windows/README.md). Download Windows binaries from [Windows Releases](https://github.com/rrrome/spherail/releases/tag/v0.1.4-windows). The native Swift build and Bluetooth instructions below apply to macOS.
+**Current version:** `0.1.5`. Mac and Windows packages share one [GitHub Release](https://github.com/rrrome/spherail/releases/tag/v0.1.5), with an Apple Silicon Mac DMG plus Windows Setup, Portable and ZIP packages. Intel Macs are not supported by this release. See [Windows setup and build instructions](Windows/README.md). The native Swift build and Bluetooth instructions below apply to macOS.
 
 [License: GPL-3.0-only](LICENSE)
 
@@ -24,7 +24,9 @@ The interface uses a deep green arcade palette. The official map browser feature
 
 New maps start with an empty board enclosed by outer walls; you place the spawn points yourself. Selecting a material shows a translucent placement preview as you move over the board. Objects cannot overlap. Holes occupy 2 × 2 cells, and right-clicking any of those cells removes the entire hole. The “?” button opens a tile guide with expandable color descriptions. Each difficulty keeps its own undo and redo history.
 
-Switching between official and custom maps uses directional fade transitions and supports rapid switching and Reduce Motion. Level achievements appear together in a fixed-height information panel without internal scrolling.
+Switching between official and custom maps uses directional fade transitions and supports rapid switching and Reduce Motion. Level achievements appear together in an information panel without internal scrolling.
+
+The macOS `0.1.5` layout pass aligns navigation, map cards, difficulty information, editor panels, match setup, results and dialogs. Difficulty panels stay 256px tall with vertically centered achievements, and the top navigation is hidden during 3D play. The green arcade palette, materials, page transitions and existing interactions are preserved.
 
 Five additional official maps bring the collection to 10 maps and 30 difficulty variants:
 

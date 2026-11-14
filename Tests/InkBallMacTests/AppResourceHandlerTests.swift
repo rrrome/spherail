@@ -3,6 +3,23 @@ import XCTest
 @testable import InkBallMac
 
 final class AppResourceHandlerTests: XCTestCase {
+    func testMacOneWayArtIsUsedForEveryColorAndDirection() throws {
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+            .deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("Web")
+        let handler = AppResourceHandler(root: root)
+        for direction in ["u", "d", "l", "r"] {
+            for color in 0..<5 {
+                let name = "one_way_\(direction)\(color).png"
+                let loaded = try handler.resource(for: URL(string: "spherail-resource://app/img/inkball/\(name)?v=1")!)
+                XCTAssertEqual(loaded.mimeType, "image/png")
+                XCTAssertEqual(loaded.data, try Data(contentsOf: root.appendingPathComponent("img/inkball/mac/\(name)")))
+                XCTAssertNotEqual(loaded.data, try Data(contentsOf: root.appendingPathComponent("img/inkball/\(name)")))
+            }
+        }
+        let wall = try handler.resource(for: URL(string: "spherail-resource://app/img/inkball/wall1.png")!)
+        XCTAssertEqual(wall.data, try Data(contentsOf: root.appendingPathComponent("img/inkball/wall1.png")))
+    }
+
     func testLocalResourcesAndContainment() throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)

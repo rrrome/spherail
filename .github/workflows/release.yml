@@ -1,0 +1,141 @@
+name: Mac and Windows build, test and release
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: desktop-release-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  windows:
+    if: (github.repository == 'rrrome/spherail_private' || github.repository == 'rrrome/spherail') && !endsWith(github.ref, '-windows')
+    runs-on: windows-latest
+    timeout-minutes: 25
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - name: Install locked dependencies
+        run: |
+          python -m pip install -r requirements-build.txt
+          npm.cmd ci
+      - name: Test storage, maps, renderer and LAN matches
+        run: |
+          npm.cmd test
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node scripts/verify_expansion.mjs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python scripts/verify_gameplay_sprites.py
+      - name: Build Windows installers
+        run: npm.cmd run build:windows
+      - name: Test packaged application without visual checks
+        timeout-minutes: 5
+        run: |
+          $env:SPHERAIL_EXE = Join-Path $PWD 'dist/win-unpacked/Spherail.exe'
+          npm.cmd run test:windows:functional
+      - name: Test per-user install and uninstall without visual checks
+        timeout-minutes: 5
+        run: ./scripts/test_windows_installer.ps1 -SkipUi
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: release-windows
+          path: |
+            dist/Spherail-*-Windows-*.exe
+            dist/Spherail-*-Windows-*.zip
+          if-no-files-found: error
+  mac:
+    if: (github.repository == 'rrrome/spherail_private' || github.repository == 'rrrome/spherail') && !endsWith(github.ref, '-windows')
+    runs-on: macos-15
+    timeout-minutes: 30
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: '1'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - name: Install locked dependencies and icon renderer
+        run: |
+          brew list librsvg >/dev/null 2>&1 || brew install librsvg
+          PYTHON=python3 bash scripts/setup.sh
+      - name: Test native storage, resources, protocols and editor validation
+        run: |
+          npm run test:3d
+          node scripts/verify_expansion.mjs
+          .venv/bin/python -m unittest discover -s Tests/ResourceGeneration
+          swift test --filter 'AppResourceHandlerTests|BLEFramesTests|LANTransportTests|LocalStoreTests|testServeQueueRequiresSpawnPointBeforeSavingOrPlaytesting|testMainMenuProvidesPasteShortcut' --skip 'testBonjourPeersExchangeFramedPacket|testLocalNetworkMatchInvitesSyncsAndSettles|testFinishedHostCanLeaveBeforeGuestAndGuestUsesHostScore'
+      - name: Test Bonjour discovery and full local matches
+        run: swift test --skip-build --filter 'testBonjourPeersExchangeFramedPacket|testLocalNetworkMatchInvitesSyncsAndSettles|testFinishedHostCanLeaveBeforeGuestAndGuestUsesHostScore'
+      - name: Build and verify Mac installer
+        env:
+          RELEASE_ARCH: arm64
+        run: |
+          bash scripts/build.sh
+          codesign --verify --deep --strict build/Spherail.app
+          python3 - <<'PY'
+          import json, os, pathlib, plistlib, shutil, subprocess
+          root = pathlib.Path('.')
+          version = json.loads((root / 'package.json').read_text())['version']
+          with (root / 'build/Spherail.app/Contents/Info.plist').open('rb') as stream:
+              info = plistlib.load(stream)
+          assert info['CFBundleShortVersionString'] == version
+          arch = os.environ['RELEASE_ARCH']
+          actual = subprocess.check_output(['lipo', '-archs', 'build/Spherail.app/Contents/MacOS/Spherail'], text=True).split()
+          assert actual == ['arm64'], actual
+          (root / 'dist').mkdir(exist_ok=True)
+          shutil.copy2(root / 'build/Spherail-macOS.dmg', root / f'dist/Spherail-{version}-macOS-{arch}.dmg')
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: release-mac-arm64
+          path: dist/Spherail-*-macOS-*.dmg
+          if-no-files-found: error
+  publish:
+    needs: [windows, mac]
+    if: startsWith(github.ref, 'refs/tags/') && !endsWith(github.ref, '-windows')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: release-*
+          path: dist
+          merge-multiple: true
+      - name: Validate release version and attach matching sources and checksums
+        run: |
+          version=$(python3 -c 'import json; print(json.load(open("package.json"))["version"])')
+          test "$GITHUB_REF_NAME" = "v$version"
+          git archive --format=zip --prefix="Spherail-$version-source/" --output="dist/Spherail-$version-source.zip" HEAD
+          for suffix in macOS-arm64.dmg Windows-x64-Setup.exe Windows-x64-Portable.exe Windows-x64.zip source.zip; do
+            test -s "dist/Spherail-$version-$suffix"
+          done
+          cd dist
+          sha256sum Spherail-* | sort -k2 > SHA256SUMS.txt
+      - name: Publish one Mac and Windows release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(python3 -c 'import json; print(json.load(open("package.json"))["version"])')
+          if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --clobber
+            gh release edit "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --title "Spherail v$version — Mac & Windows" --notes-file RELEASE_NOTES.md --latest
+          else
+            gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --title "Spherail v$version — Mac & Windows" --notes-file RELEASE_NOTES.md --verify-tag --latest
+          fi
+          gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --json url,tagName,isDraft,assets

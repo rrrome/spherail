@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 
 from PIL import Image, ImageChops
-from generate_gameplay_sprites import accelerator_chevrons
+from generate_gameplay_sprites import COLORS, accelerator_chevrons, mix
 
 
 APP = Path(__file__).resolve().parents[1]
@@ -52,6 +52,41 @@ def verify() -> None:
     assert {p.name for p in RUNTIME.glob('*.png')} == set(sizes) | {
         'ambient_community.png', 'ambient_diy.png', 'ambient_favorite.png'
     }, 'Unexpected board art packaged'
+
+    mac_names = {f'one_way_{direction}{index}.png' for direction in 'udlr' for index in range(5)}
+    mac_owned = APP / 'Assets' / 'GameplayMac'
+    mac_runtime = RUNTIME / 'mac'
+    assert {p.name for p in mac_owned.glob('*.png')} == mac_names, 'Incomplete Mac one-way art'
+    assert {p.name for p in mac_runtime.glob('*.png')} == mac_names, 'Unexpected Mac one-way art'
+    for index, color in enumerate(COLORS):
+        face = mix(color, (227, 231, 225), 0.62)
+        ink = mix(color, (16, 54, 65), 0.49)
+        contrast = [a-b for a, b in zip(face, ink)]
+        norm = sum(value*value for value in contrast)
+        for direction in 'udlr':
+            name = f'one_way_{direction}{index}.png'
+            path = mac_runtime / name
+            assert digest(path) == digest(mac_owned / name), f'{name}: Mac packaging mismatch'
+            with Image.open(path) as image, Image.open(RUNTIME / name) as shared:
+                assert image.size == (32, 32), f'{name}: changed cell dimensions'
+                image, shared = image.convert('RGB'), shared.convert('RGB')
+                bounds = ImageChops.difference(image, shared).getbbox()
+                assert bounds and min(bounds[:2]) >= 6 and max(bounds[2:]) <= 27, f'{name}: frame or rails changed'
+                for x, y in ((11, 9), (21, 9)):
+                    point = {'u': (x, y), 'd': (32-x, 32-y), 'l': (y, 32-x), 'r': (32-y, x)}[direction]
+                    assert max(abs(a-b) for a, b in zip(image.getpixel(point), ink)) < 20, f'{name}: front bar missing'
+                # Include antialiased edges when measuring the visible ink's
+                # centre of mass, rather than counting only fully dark pixels.
+                weights = []
+                for y in range(7, 26):
+                    for x in range(7, 26):
+                        amount = sum((a-b)*c for a, b, c in zip(face, image.getpixel((x, y)), contrast)) / norm
+                        weights.append((x, y, max(0, min(1, amount))))
+                mass = sum(weight for x, y, weight in weights)
+                assert mass > 80, f'{name}: arrow missing'
+                for axis in (0, 1):
+                    centre = sum(point[axis]*point[2] for point in weights) / mass
+                    assert abs(centre-15.5) < 0.6, f'{name}: off-centre mark ({centre})'
     for index in range(5):
         key = RUNTIME / f'key_wall{index}.png'
         assert digest(key) == digest(APP / 'Web' / 'img' / 'editor' / f'Y{index}.png'), 'Editor key wall differs from game'
@@ -93,7 +128,7 @@ def verify() -> None:
         xs, ys = zip(*points)
         assert abs((min(xs) + max(xs)) / 2 - 16) < 0.01, direction
         assert abs((min(ys) + max(ys)) / 2 - 16) < 0.01, direction
-    print(f'Verified {len(sizes)} original gameplay sprites and 3 App UI ambient marks.')
+    print(f'Verified {len(sizes)} shared gameplay sprites, {len(mac_names)} Mac one-way sprites and 3 App UI ambient marks.')
 
 
 if __name__ == '__main__':

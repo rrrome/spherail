@@ -1,6 +1,6 @@
 {
   "name": "spherail",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Spherail / 绘轨 — offline 2D and 3D arcade puzzle game",
   "author": "rrrome and contributors",
   "main": "Windows/main.cjs",
@@ -13,6 +13,7 @@
     "start": "electron .",
     "test": "node --test Tests/JavaScript/*.test.mjs Tests/Windows/*.test.cjs",
     "test:windows": "node scripts/smoke_windows.mjs",
+    "test:windows:functional": "node scripts/smoke_windows.mjs --no-visual",
     "build:windows": "node scripts/build_windows.mjs"
   },
   "dependencies": {
